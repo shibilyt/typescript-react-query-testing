@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "axiosInstance";
 import { useQuery } from "react-query";
 import { FilterType } from "../types";
 import { getQueryFromFilter } from "../utils";
