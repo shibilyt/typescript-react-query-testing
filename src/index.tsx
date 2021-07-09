@@ -2,16 +2,22 @@ import * as React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router } from "react-router-dom";
 import { ChakraProvider, theme } from "@chakra-ui/react";
+import { QueryClient, QueryClientProvider } from "react-query";
+
 import { App } from "./App";
 import reportWebVitals from "./reportWebVitals";
 import * as serviceWorker from "./serviceWorker";
 
+const queryClient = new QueryClient();
+
 ReactDOM.render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
-      <Router>
-        <App />
-      </Router>
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <App />
+        </Router>
+      </QueryClientProvider>
     </ChakraProvider>
   </React.StrictMode>,
   document.getElementById("root")

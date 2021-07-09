@@ -8,10 +8,10 @@ export const launchesEndPoints = {
   getLaunchDetail: (id: string) => `launches/${id}`,
 };
 
-export function useGetLaunches({ filter }: { filter: FilterType }) {
+export function useGetLaunches({ filter = {} }: { filter: FilterType }) {
   const key = launchesEndPoints.getLaunches;
   return useQuery(key, () =>
-    axios.post(key, getQueryFromFilter(filter)).then()
+    axios.post(key, getQueryFromFilter(filter)).then(response => response.data)
   );
 }
 
