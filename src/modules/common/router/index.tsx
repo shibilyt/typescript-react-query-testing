@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
-import AppLayout from "modules/common/layouts/App";
+import AppLayout from "modules/common/layouts/app";
 import Launches from "modules/launches";
 import NotFound from "modules/notFound";
 
