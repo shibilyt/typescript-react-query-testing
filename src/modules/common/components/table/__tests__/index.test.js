@@ -66,6 +66,26 @@ test("table renders with proper headers and data", () => {
   });
 });
 
+test("table loading is rendered when loading", () => {
+  const data = [
+    {
+      name: "FalconSat",
+      date_utc: "2006-03-24T22:30:00.000Z",
+    },
+    {
+      name: "DemoSat",
+      date_utc: "2007-03-21T01:10:00.000Z",
+    },
+    {
+      name: "Trailblazer",
+      date_utc: "2008-08-03T03:34:00.000Z",
+    },
+  ];
+
+  render(<Table data={data} columns={columns} isLoading={true} name="table" />);
+  expect(screen.queryByTestId("loading")).toBeInTheDocument();
+});
+
 test("table error is captured by ErrorBoudary", () => {
   const data = [
     {
