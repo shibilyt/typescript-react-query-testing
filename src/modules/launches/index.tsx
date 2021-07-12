@@ -81,7 +81,7 @@ export default function Launches() {
   console.log(id);
 
   const filter = {};
-  const { data: launchData } = useGetLaunches({ filter });
+  const { data: launchData, isLoading } = useGetLaunches({ filter });
 
   const data = React.useMemo(
     () => (launchData ? launchData.docs : []),
@@ -94,6 +94,7 @@ export default function Launches() {
           name="launches-table"
           columns={columns}
           data={data}
+          isLoading={isLoading}
         />
       </div>
     </>

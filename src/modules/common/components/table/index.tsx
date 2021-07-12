@@ -13,9 +13,9 @@ import {
 import { TableProperties } from "./types";
 
 export default function Table<T extends Record<string, unknown>>(
-  props: React.PropsWithChildren<TableProperties<T>>
+  props: React.PropsWithChildren<TableProperties<T> & { isLoading: Boolean }>
 ): React.ReactElement {
-  const { columns, data } = props;
+  const { columns, data, isLoading } = props;
 
   const { getTableProps, getTableBodyProps, prepareRow, rows, headerGroups } =
     useTable<T>({
@@ -84,6 +84,9 @@ export default function Table<T extends Record<string, unknown>>(
               data-testid="empty-table"
             ></chakra.div>
           )}
+          {isLoading ? (
+            <chakra.div minHeight="636px" data-testid="loading"></chakra.div>
+          ) : null}
         </Tbody>
       </ChakraTable>
     </Box>
