@@ -1,5 +1,5 @@
 import { screen, within } from "@testing-library/react";
-import { render } from "test-utils";
+import { render } from "test/test-utils";
 import Table from "..";
 
 test("table renders with proper headers and data", () => {

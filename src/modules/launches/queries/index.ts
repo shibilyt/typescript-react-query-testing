@@ -4,7 +4,7 @@ import { FilterType, LaunchesQueryResponse } from "../types";
 import { getQueryFromFilter } from "../utils";
 
 export const launchesEndPoints = {
-  getLaunches: "launches/query",
+  getLaunches: "launches/query" as const,
   getLaunchDetail: (id: string) => `launches/${id}`,
 };
 

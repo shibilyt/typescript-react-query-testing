@@ -1,5 +1,9 @@
-import { renderHook } from "test-utils";
+import { screen, waitFor } from "@testing-library/react";
+import { rest } from "msw";
+import { server } from "test/mocks/server";
+import { render, renderHook } from "test/test-utils";
 import { useGetLaunches } from "../queries";
+import Launches from "modules/launches";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 // import Launches from "modules/launches";
@@ -25,6 +29,7 @@ const server = setupServer(
 );
 
 beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 test("useGetLaunches returns launch data with no initial filter", async () => {

@@ -1,15 +1,22 @@
 import * as React from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { render, RenderOptions } from "@testing-library/react";
 import { renderHook, RenderHookOptions } from "@testing-library/react-hooks";
 import { ChakraProvider, theme } from "@chakra-ui/react";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { MemoryRouter } from "react-router-dom";
 
-const queryClient = new QueryClient();
-const AllProviders = ({ children }: { children?: React.ReactNode }) => (
-  <ChakraProvider theme={theme}>
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  </ChakraProvider>
-);
+const AllProviders = ({ children }: { children?: React.ReactNode }) => {
+  const queryClient = new QueryClient();
+  return (
+    <ChakraProvider theme={theme}>
+      <MemoryRouter>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </MemoryRouter>
+    </ChakraProvider>
+  );
+};
 
 const customRender = (ui: React.ReactElement, options?: RenderOptions) =>
   render(ui, { wrapper: AllProviders, ...options });
