@@ -7,6 +7,7 @@ export interface TableProperties<T extends Record<string, unknown>>
 
 export enum tableStates {
   loading = "loading",
+  error = "error",
   empty = "empty",
   haveData = "haveData",
 }

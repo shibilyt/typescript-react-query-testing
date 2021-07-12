@@ -1,12 +1,14 @@
 import * as React from "react";
 import { useParams } from "react-router-dom";
+import { Badge, Box, chakra } from "@chakra-ui/react";
+import { CellProps, Column } from "react-table";
 
 import Table from "modules/common/components/table";
-import { SpaceXApiResponse } from "./types";
-import { CellProps, Column } from "react-table";
+
 import { useGetLaunches } from "./queries";
 import { getStatusOfLaunch } from "./utils";
-import { Badge } from "@chakra-ui/react";
+
+import { SpaceXApiResponse } from "./types";
 
 const columns: Column<SpaceXApiResponse>[] = [
   {
@@ -81,23 +83,29 @@ export default function Launches() {
   console.log(id);
 
   const filter = {};
-  const { data: launchData, isLoading } = useGetLaunches({ filter });
+  const {
+    data: launchData,
+    isLoading,
+    error,
+    refetch,
+  } = useGetLaunches({ filter });
 
   const data = React.useMemo(
     () => (launchData ? launchData.docs : []),
     [launchData]
   );
+
   return (
-    <>
-      <div>
-        <Table<SpaceXApiResponse>
-          name="launches-table"
-          columns={columns}
-          data={data}
-          emptyMessage={"No results found for the specified filter"}
-          isLoading={isLoading}
-        />
-      </div>
-    </>
+    <Box my={8}>
+      <Table<SpaceXApiResponse>
+        name="launches-table"
+        columns={columns}
+        data={data}
+        emptyMessage={"No results found for the specified filter"}
+        isLoading={isLoading}
+        error={error}
+        resetErrorHandler={refetch}
+      />
+    </Box>
   );
 }
