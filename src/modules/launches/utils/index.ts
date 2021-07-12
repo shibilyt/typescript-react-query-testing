@@ -1,4 +1,4 @@
-import { FilterType, LaunchQueryType } from "../types";
+import { FilterType, LaunchQueryType, SpaceXApiResponse } from "../types";
 
 export function getQueryFromFilter(filter: FilterType) {
   const query: LaunchQueryType = {};
@@ -14,4 +14,12 @@ export function getQueryFromFilter(filter: FilterType) {
   return {
     query,
   };
+}
+
+export function getStatusOfLaunch(launchData: SpaceXApiResponse) {
+  if (launchData.upcoming) return "Upcoming";
+  if (launchData.success) {
+    return "Success";
+  }
+  return "Failed";
 }

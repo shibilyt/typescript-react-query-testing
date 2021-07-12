@@ -1,17 +1,24 @@
 import axios from "axiosInstance";
 import { useQuery } from "react-query";
-import { FilterType } from "../types";
+import { FilterType, LaunchesQueryResponse } from "../types";
 import { getQueryFromFilter } from "../utils";
 
 export const launchesEndPoints = {
-  getLaunches: "query",
+  getLaunches: "launches/query" as const,
   getLaunchDetail: (id: string) => `launches/${id}`,
 };
 
-export function useGetLaunches({ filter }: { filter: FilterType }) {
+export function useGetLaunches({ filter = {} }: { filter: FilterType }) {
   const key = launchesEndPoints.getLaunches;
-  return useQuery(key, () =>
-    axios.post(key, getQueryFromFilter(filter)).then()
+  return useQuery<LaunchesQueryResponse>(key, () =>
+    axios
+      .post(key, {
+        ...getQueryFromFilter(filter),
+        options: {
+          populate: ["launchpad", "rocket", "payloads"],
+        },
+      })
+      .then((response) => response.data)
   );
 }
 
