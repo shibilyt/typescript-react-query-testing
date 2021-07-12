@@ -94,6 +94,7 @@ export default function Launches() {
           name="launches-table"
           columns={columns}
           data={data}
+          emptyMessage={"No results found for the specified filter"}
           isLoading={isLoading}
         />
       </div>

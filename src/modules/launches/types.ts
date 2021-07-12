@@ -50,11 +50,13 @@ export type SpaceXApiResponse = {
   window?: number | null;
   rocket?: Rocket | null;
   success?: Boolean | null;
-  failures?: {
-    time: number;
-    altitude: number | null;
-    reason: string;
-  }[];
+  failures?:
+    | {
+        time: number;
+        altitude: number | null;
+        reason: string;
+      }[]
+    | null;
   upcoming: Boolean;
   details?: string | null;
   fairings?: {
@@ -62,45 +64,47 @@ export type SpaceXApiResponse = {
     recovery_attempt: Boolean | null;
     recovered: Boolean | null;
     ships: string[];
-  };
+  } | null;
   crew?: string[];
   ships?: string[];
   capsules?: string[];
   payloads?: Payload[];
   launchpad?: Launchpad | null;
   launch_library_id?: string | null;
-  cores?: {
-    core: string | null;
-    flight: number | null;
-    gridfins: Boolean | null;
-    legs: Boolean | null;
-    reused: Boolean | null;
-    landing_attempt: Boolean | null;
-    landing_success: Boolean | null;
-    landing_type: string | null;
-    landpad: string | null;
-  }[];
+  cores?:
+    | {
+        core: string | null;
+        flight: number | null;
+        gridfins: Boolean | null;
+        legs: Boolean | null;
+        reused: Boolean | null;
+        landing_attempt: Boolean | null;
+        landing_success: Boolean | null;
+        landing_type: string | null;
+        landpad: string | null;
+      }[]
+    | null;
   links?: {
     patch: {
       small: string | null;
       large: string | null;
-    };
+    } | null;
     reddit: {
       campaign: string | null;
       launch: string | null;
       media: string | null;
       recovery: string | null;
-    };
+    } | null;
     flickr: {
       small: string[];
       original: string[];
-    };
+    } | null;
     presskit: string | null;
     webcast: string | null;
     youtube_id: string | null;
     article: string | null;
     wikipedia: string | null;
-  };
+  } | null;
   auto_update?: Boolean;
 };
 
@@ -113,7 +117,7 @@ type Payload = {
     manifest: string | null;
     water_landing: Boolean | null;
     land_landing: Boolean | null;
-  };
+  } | null;
   name: string | null;
   type: string | null;
   reused: boolean | null;
@@ -165,7 +169,7 @@ type Launchpad = {
   launches: string[] | null;
   images: {
     large: string[] | null;
-  };
+  } | null;
   details: string | null;
   id: string | null;
 };
@@ -184,15 +188,15 @@ type Rocket = {
   height: {
     meters: number;
     feet: number;
-  };
+  } | null;
   diameter: {
     meters: number;
     feet: number;
-  };
+  } | null;
   mass: {
     kg: number;
     lb: number;
-  };
+  } | null;
   payload_weights: any[];
   first_stage: {
     reusable: Boolean;
@@ -202,12 +206,12 @@ type Rocket = {
     thrust_sea_level: {
       kN: number;
       lbf: number;
-    };
+    } | null;
     thrust_vacuum: {
       kN: number;
       lbf: number;
-    };
-  };
+    } | null;
+  } | null;
   second_stage: {
     reusable: Boolean;
     engines: number;
@@ -216,21 +220,21 @@ type Rocket = {
     thrust: {
       kN: number;
       lbf: number;
-    };
+    } | null;
     payloads: {
       option_1: string;
       composite_fairing: {
         height: {
           meters: number;
           feet: number;
-        };
+        } | null;
         diameter: {
           meters: number;
           feet: number;
-        };
-      };
-    };
-  };
+        } | null;
+      } | null;
+    } | null;
+  } | null;
   engines: {
     number: number;
     type: string;
@@ -239,25 +243,26 @@ type Rocket = {
     isp: {
       sea_level: number;
       vacuum: number;
-    };
+    } | null;
     engine_loss_max: number;
     propellant_1: string;
     propellant_2: string;
     thrust_sea_level: {
       kN: number;
       lbf: number;
-    };
+    } | null;
     thrust_vacuum: {
       kN: number;
       lbf: number;
-    };
+    } | null;
     thrust_to_weight: number;
-  };
+  } | null;
   landing_legs: {
     number: number;
     material: any;
-  };
+  } | null;
   flickr_images: string[];
   wikipedia: string;
   description: string;
+  id: string;
 };

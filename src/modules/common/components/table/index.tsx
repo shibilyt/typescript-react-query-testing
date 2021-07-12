@@ -10,12 +10,19 @@ import {
   chakra,
   Box,
 } from "@chakra-ui/react";
-import { TableProperties } from "./types";
+import { Loader } from "assets/Loader";
+
+import { TableProperties, tableStates } from "./types";
 
 export default function Table<T extends Record<string, unknown>>(
-  props: React.PropsWithChildren<TableProperties<T> & { isLoading: Boolean }>
+  props: React.PropsWithChildren<
+    TableProperties<T> & {
+      isLoading: Boolean;
+      emptyMessage: string;
+    }
+  >
 ): React.ReactElement {
-  const { columns, data, isLoading } = props;
+  const { columns, data, isLoading, emptyMessage } = props;
 
   const { getTableProps, getTableBodyProps, prepareRow, rows, headerGroups } =
     useTable<T>({
@@ -23,19 +30,24 @@ export default function Table<T extends Record<string, unknown>>(
       data,
     });
 
+  const status = React.useMemo(() => {
+    if (isLoading) return tableStates.loading;
+    if (data && data === []) return tableStates.empty;
+    return tableStates.haveData;
+  }, [isLoading, data]);
   return (
     <Box
-      mt={8}
+      my={8}
       border="1px solid"
       borderColor="nitroGray.200"
       borderRadius="md"
       overflow="hidden"
+      boxShadow="base"
     >
       <ChakraTable
         size="sm"
         fontSize="sm"
         variant="unstyled"
-        boxShadow="base"
         {...getTableProps()}
       >
         <Thead bg="nitroGray.100" h={8} color="nitroGray.600">
@@ -54,9 +66,9 @@ export default function Table<T extends Record<string, unknown>>(
             </Tr>
           ))}
         </Thead>
-        <Tbody {...getTableBodyProps()}>
-          {rows.length ? (
-            rows.map((row, i) => {
+        {status === tableStates.haveData ? (
+          <Tbody {...getTableBodyProps()}>
+            {rows.map((row, i) => {
               prepareRow(row);
               return (
                 <Tr {...row.getRowProps()}>
@@ -77,18 +89,35 @@ export default function Table<T extends Record<string, unknown>>(
                   })}
                 </Tr>
               );
-            })
-          ) : (
-            <chakra.div
-              minHeight="636px"
-              data-testid="empty-table"
-            ></chakra.div>
-          )}
-          {isLoading ? (
-            <chakra.div minHeight="636px" data-testid="loading"></chakra.div>
-          ) : null}
-        </Tbody>
+            })}
+          </Tbody>
+        ) : null}
       </ChakraTable>
+      {status === tableStates.empty ? (
+        <chakra.div
+          minHeight="636px"
+          pt="12"
+          display="flex"
+          justifyContent="center"
+          color="nitroGray.700"
+          data-testid="empty-table"
+        >
+          {emptyMessage}
+        </chakra.div>
+      ) : null}
+      {status === tableStates.loading ? (
+        <chakra.div
+          minHeight="636px"
+          pt="12"
+          data-testid="loading"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          color="nitroGray.700"
+        >
+          <Loader />
+        </chakra.div>
+      ) : null}
     </Box>
   );
 }
