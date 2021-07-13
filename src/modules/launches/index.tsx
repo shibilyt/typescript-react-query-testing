@@ -1,12 +1,13 @@
 import * as React from "react";
 import { useParams } from "react-router-dom";
-import { Badge, Box, chakra } from "@chakra-ui/react";
+import { Badge, Box } from "@chakra-ui/react";
 import { CellProps, Column } from "react-table";
+import format from "date-fns/format";
 
 import Table from "modules/common/components/table";
 
 import { useGetLaunches } from "./queries";
-import { getStatusOfLaunch } from "./utils";
+import { getFormatString, getStatusOfLaunch } from "./utils";
 
 import { SpaceXApiResponse } from "./types";
 
@@ -18,10 +19,14 @@ const columns: Column<SpaceXApiResponse>[] = [
   {
     Header: "Launched (UTC)",
     accessor: "date_utc",
-    Cell: (
-      cell: CellProps<SpaceXApiResponse, SpaceXApiResponse["date_utc"]>
-    ) => {
-      return cell.value;
+    Cell: ({
+      value,
+      row: { original: launchData },
+    }: CellProps<SpaceXApiResponse, SpaceXApiResponse["date_utc"]>) => {
+      const date = new Date(value);
+      const status = getStatusOfLaunch(launchData);
+      const formatString = getFormatString(status);
+      return format(date, formatString);
     },
   },
   {
@@ -36,7 +41,7 @@ const columns: Column<SpaceXApiResponse>[] = [
     Header: "Orbit",
     accessor: "payloads",
     Cell: ({
-      cell: { value },
+      value,
     }: CellProps<SpaceXApiResponse, SpaceXApiResponse["payloads"]>) => {
       return value?.map((payload) => payload.orbit).join(", ");
     },
@@ -44,12 +49,9 @@ const columns: Column<SpaceXApiResponse>[] = [
   {
     Header: "Launch Status",
     accessor: "success",
-    Cell: (
-      cell: CellProps<SpaceXApiResponse, SpaceXApiResponse["success"]>
-    ) => {
-      const {
-        row: { original: launchData },
-      } = cell;
+    Cell: ({
+      row: { original: launchData },
+    }: CellProps<SpaceXApiResponse, SpaceXApiResponse["success"]>) => {
       const status = getStatusOfLaunch(launchData);
       const statusBadgeEnum: Record<string, string> = {
         Upcoming: "orange",

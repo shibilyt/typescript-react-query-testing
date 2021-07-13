@@ -23,3 +23,8 @@ export function getStatusOfLaunch(launchData: SpaceXApiResponse) {
   }
   return "Failed";
 }
+
+export function getFormatString(status: string) {
+  if (status === "Failed") return "dd MMMM yyyy 'at' HH:mm";
+  return "dd MMMM yyyy HH:mm";
+}
