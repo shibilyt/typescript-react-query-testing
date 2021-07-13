@@ -1,17 +1,21 @@
 export type FilterType = {
-  upcoming?: boolean;
-  past?: boolean;
-  status?: string;
+  filter: string;
   date?: {
     start: string;
     end: string;
   };
 };
 
+export enum filterStates {
+  all = "all",
+  upcoming = "upcoming",
+  success = "success",
+  failed = "failed",
+}
+
 export type LaunchQueryType = {
-  upcoming?: boolean;
-  past?: boolean;
-  status?: string;
+  upcoming?: Boolean;
+  success?: Boolean;
   date_utc?: DateRange;
 };
 

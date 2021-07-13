@@ -10,7 +10,7 @@ import { Filter as FilterIcon } from "assets/Filter";
 import { useGetLaunches } from "./queries";
 import { getFormatString, getStatusOfLaunch } from "./utils";
 
-import { SpaceXApiResponse } from "./types";
+import { filterStates, SpaceXApiResponse } from "./types";
 
 const columns: Column<SpaceXApiResponse>[] = [
   {
@@ -81,17 +81,26 @@ const columns: Column<SpaceXApiResponse>[] = [
   },
 ];
 
+const filterOptions = [
+  { label: "All Launches", value: filterStates.all },
+  { label: "Upcoming Launches", value: filterStates.upcoming },
+  { label: "Successful Launches", value: filterStates.success },
+  { label: "Failed Launches", value: filterStates.failed },
+];
+
 export default function Launches() {
   const { id } = useParams<{ id: string }>();
   console.log(id);
 
-  const filter = {};
+  const [filterSelected, setFilterSelected] = React.useState(filterStates.all);
   const {
     data: launchData,
     isLoading,
     error,
     refetch,
-  } = useGetLaunches({ filter });
+  } = useGetLaunches({
+    filter: filterSelected,
+  });
 
   const data = React.useMemo(
     () => (launchData ? launchData.docs : []),
@@ -99,17 +108,16 @@ export default function Launches() {
   );
 
   return (
-    <Box>
-      <Box my={12} display="flex" justifyContent="flex-end">
+    <Box my={12}>
+      <Box mb={12} display="flex" justifyContent="flex-end">
         <Select
-          options={[
-            { label: "All Launches", value: "all" },
-            { label: "Upcoming Launches", value: "upcoming" },
-            { label: "Successful Launches", value: "success" },
-            { label: "Failed Launches", value: "failed" },
-          ]}
+          options={filterOptions}
           name="filter-select"
           label="filter"
+          value={filterSelected}
+          onChange={(option) => {
+            setFilterSelected(option.value);
+          }}
           startIcon={<FilterIcon />}
         />
       </Box>
