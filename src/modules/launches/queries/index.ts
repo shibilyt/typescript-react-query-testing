@@ -1,6 +1,6 @@
 import axios from "axiosInstance";
 import { useQuery } from "react-query";
-import { FilterType, LaunchesQueryResponse } from "../types";
+import { filterStates, FilterType, LaunchesQueryResponse } from "../types";
 import { getQueryFromFilter } from "../utils";
 
 export const launchesEndPoints = {
@@ -8,12 +8,14 @@ export const launchesEndPoints = {
   getLaunchDetail: (id: string) => `launches/${id}`,
 };
 
-export function useGetLaunches({ filter = {} }: { filter: FilterType }) {
+export function useGetLaunches(
+  launchFilter: FilterType = { filter: filterStates.all }
+) {
   const key = launchesEndPoints.getLaunches;
-  return useQuery<LaunchesQueryResponse>(key, () =>
+  return useQuery<LaunchesQueryResponse>([key, launchFilter], () =>
     axios
       .post(key, {
-        ...getQueryFromFilter(filter),
+        ...getQueryFromFilter(launchFilter),
         options: {
           populate: ["launchpad", "rocket", "payloads"],
         },

@@ -1,14 +1,19 @@
-import { FilterType, LaunchQueryType, SpaceXApiResponse } from "../types";
+import {
+  FilterType,
+  filterStates,
+  LaunchQueryType,
+  SpaceXApiResponse,
+} from "../types";
 
-export function getQueryFromFilter(filter: FilterType) {
+export function getQueryFromFilter({ filter, date }: FilterType) {
   const query: LaunchQueryType = {};
-  if (filter.upcoming) query.upcoming = true;
-  if (filter.past) query.past = true;
-  if (filter.status) query.status = filter.status;
-  if (filter.date)
+  if (filter === filterStates.upcoming) query.upcoming = true;
+  if (filter === "success") query.success = true;
+  if (filter === "failed") query.success = false;
+  if (date)
     query.date_utc = {
-      $gte: filter.date.start,
-      $lte: filter.date.end,
+      $gte: date.start,
+      $lte: date.end,
     };
 
   return {
