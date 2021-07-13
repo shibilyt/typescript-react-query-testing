@@ -14,4 +14,13 @@ export const theme = extendTheme({
       800: "#1F2937",
     },
   },
+  styles: {
+    global: {
+      body: {
+        color: "nitroGray.800",
+        fontSize: "16px",
+        lineheight: 1,
+      },
+    },
+  },
 });

@@ -9,6 +9,8 @@ import {
   Th,
   chakra,
   Box,
+  VStack,
+  Button,
 } from "@chakra-ui/react";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 import { Loader } from "assets/Loader";
@@ -143,18 +145,17 @@ export default function Table<T extends Record<string, unknown>>(
 
 function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
-    <Box
+    <VStack
       minHeight="636px"
       pt="12"
-      display="flex"
-      justifyContent="center"
+      alignItems="center"
       color="nitroGray.700"
       data-testid="table-error"
       role="alert"
     >
       <p>Something went wrong:</p>
       <pre>{error.message}</pre>
-      <button onClick={resetErrorBoundary}>Try again</button>
-    </Box>
+      <Button onClick={resetErrorBoundary}>Try again</Button>
+    </VStack>
   );
 }
