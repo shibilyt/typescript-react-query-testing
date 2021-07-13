@@ -5,7 +5,8 @@ import { CellProps, Column } from "react-table";
 import format from "date-fns/format";
 
 import Table from "modules/common/components/table";
-
+import Select from "modules/common/components/select";
+import { Filter as FilterIcon } from "assets/Filter";
 import { useGetLaunches } from "./queries";
 import { getFormatString, getStatusOfLaunch } from "./utils";
 
@@ -98,7 +99,20 @@ export default function Launches() {
   );
 
   return (
-    <Box my={8}>
+    <Box>
+      <Box my={12} display="flex" justifyContent="flex-end">
+        <Select
+          options={[
+            { label: "All Launches", value: "all" },
+            { label: "Upcoming Launches", value: "upcoming" },
+            { label: "Successful Launches", value: "success" },
+            { label: "Failed Launches", value: "failed" },
+          ]}
+          name="filter-select"
+          label="filter"
+          startIcon={<FilterIcon />}
+        />
+      </Box>
       <Table<SpaceXApiResponse>
         name="launches-table"
         columns={columns}
