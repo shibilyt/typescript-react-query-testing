@@ -84,6 +84,7 @@ export default function Select<TValue = string>({
             ...styles.popper,
             boxShadow: "0px 1px 3px 0px #0000001A",
           }}
+          width="max-content"
           bg="white"
           rounded="md"
           py={1}
