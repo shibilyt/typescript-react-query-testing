@@ -32,7 +32,7 @@ export default function Select<TValue = string>({
 }: SelectProps<TValue>) {
   const {
     isOpen,
-    selectedOption,
+    value,
     highlightedIndex,
     getButtonProps,
     getLabelProps,
@@ -60,6 +60,14 @@ export default function Select<TValue = string>({
     ],
   });
 
+  function getSelectedValueLabel(
+    value: TValue | undefined,
+    options: Option<TValue>[]
+  ) {
+    const option = options.find((option) => option.value === value);
+    return option?.label;
+  }
+
   return (
     <chakra.div pos="relative">
       <VisuallyHidden>
@@ -73,7 +81,7 @@ export default function Select<TValue = string>({
       >
         {StartIcon ? StartIcon : null}
         <Text ml={StartIcon ? 2 : 0} mr={2} as="span">
-          {selectedOption?.label || placeholder}
+          {getSelectedValueLabel(value, options) ?? placeholder}
         </Text>
         <ChevronDownIcon />
       </chakra.button>
