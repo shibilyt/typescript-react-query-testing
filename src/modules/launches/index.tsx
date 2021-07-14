@@ -44,7 +44,11 @@ const columns: Column<SpaceXApiResponse>[] = [
     Cell: ({
       value,
     }: CellProps<SpaceXApiResponse, SpaceXApiResponse["payloads"]>) => {
-      return value?.map((payload) => payload.orbit).join(", ");
+      const orbits = value?.map((payload) => payload.orbit as string);
+      if (orbits == null) return "";
+      const uniqueOrbits = new Set(orbits);
+
+      return Array.from(uniqueOrbits).join(", ");
     },
   },
   {
