@@ -5,6 +5,7 @@
   "dependencies": {
     "@chakra-ui/icons": "^1.0.14",
     "@chakra-ui/react": "^1.0.0",
+    "@datepicker-react/hooks": "^2.8.0",
     "@emotion/react": "^11.0.0",
     "@emotion/styled": "^11.0.0",
     "@fontsource/inter": "^4.5.0",

@@ -1713,6 +1713,13 @@
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-10.1.0.tgz#f0950bba18819512d42f7197e56c518aa491cf18"
   integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
 
+"@datepicker-react/hooks@^2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@datepicker-react/hooks/-/hooks-2.8.0.tgz#34e921f64fda5fb25d140a25f2143596a6b637eb"
+  integrity sha512-hc+SKVi595W5fToh5gHJiMiREAw58YAbt37N0MpQdGNiMWwO4DYm37PpmVUQlT23GL7ZkLNThp0ZJsrk69HRLQ==
+  dependencies:
+    date-fns "^2.14.0"
+
 "@emotion/babel-plugin@^11.3.0":
   version "11.3.0"
   resolved "https://registry.yarnpkg.com/@emotion/babel-plugin/-/babel-plugin-11.3.0.tgz#3a16850ba04d8d9651f07f3fb674b3436a4fb9d7"
@@ -4904,7 +4911,7 @@ data-urls@^2.0.0:
     whatwg-mimetype "^2.3.0"
     whatwg-url "^8.0.0"
 
-date-fns@^2.22.1:
+date-fns@^2.14.0, date-fns@^2.22.1:
   version "2.22.1"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.22.1.tgz#1e5af959831ebb1d82992bf67b765052d8f0efc4"
   integrity sha512-yUFPQjrxEmIsMqlHhAhmxkuH769baF21Kk+nZwZGyrMoyLA+LugaQtC0+Tqf9CBUUULWwUJt6Q5ySI3LJDDCGg==
