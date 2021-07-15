@@ -146,7 +146,9 @@ export default function useSelect<TValue>({
           buttonRef.current = button;
         }),
         tabIndex: 0,
-        "aria-labelledby": name,
+        "aria-labelledby": rest["aria-labelledby"]
+          ? `${name} ${rest["aria-labelledby"]}`
+          : name,
         "aria-haspopup": "listbox",
         "aria-expanded": isOpen,
         onClick: (e: React.MouseEvent) => {
