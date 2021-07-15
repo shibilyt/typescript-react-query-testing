@@ -97,11 +97,13 @@ export default function useSelect<TValue>({
   const selectIndex = React.useCallback(
     (index: number) => {
       const option = options[index];
-      dispatch({
-        type: selectActionTypes.selectOption,
-        option,
-      });
-      onChange?.(option);
+      if (!option.disabled) {
+        dispatch({
+          type: selectActionTypes.selectOption,
+          option,
+        });
+        onChange?.(option);
+      }
     },
     [options, onChange]
   );
@@ -192,10 +194,13 @@ export default function useSelect<TValue>({
             case keyCode.ENTER: {
               if (isOpen) {
                 selectIndex(highlightedIndex);
-                dispatch({
-                  type: selectActionTypes.setOpen,
-                  isOpen: false,
-                });
+                const option = options[highlightedIndex];
+                if (!option.disabled) {
+                  dispatch({
+                    type: selectActionTypes.setOpen,
+                    isOpen: false,
+                  });
+                }
               } else {
                 dispatch({
                   type: selectActionTypes.setOpen,

@@ -1,6 +1,7 @@
 export type Option<TValue> = {
   label: string;
   value: TValue;
+  disabled?: boolean;
 };
 
 export interface SelectState<TValue> {
@@ -13,7 +14,7 @@ export interface SelectProps<TValue> {
   options: Option<TValue>[];
   value?: TValue;
   onChange?: (option: Option<TValue>) => void;
-  readOnly?: Boolean;
+  readOnly?: boolean;
   name: string;
 }
 
