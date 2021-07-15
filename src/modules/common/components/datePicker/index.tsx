@@ -1,18 +1,16 @@
 import * as React from "react";
-
+import { Box } from "@chakra-ui/react";
 import {
   FocusedInput,
-  getDateMonthAndYear,
-  getCurrentYearMonthAndDate,
   getInitialMonths,
   MonthType,
   START_DATE,
   useDatepicker,
 } from "@datepicker-react/hooks";
 
+import { useImmer } from "use-immer";
 import Month from "./components/month";
 import DatepickerContext from "./context";
-import { Box } from "@chakra-ui/react";
 
 interface DateState {
   startDate: Date | null;
@@ -20,20 +18,19 @@ interface DateState {
   focusedInput: FocusedInput;
 }
 
-export default function Datepicker() {
-  const [state, setState] = React.useState<DateState>({
-    startDate: null,
-    endDate: null,
-    focusedInput: START_DATE,
-  });
-  const [controlledActiveMonths] = React.useState<MonthType[]>(() => [
-    getCurrentYearMonthAndDate(),
-    getDateMonthAndYear(new Date("December 17, 2022 03:24:00")),
-  ]);
+interface DatepickerProps {
+  dateState: DateState;
+  setDateState: React.Dispatch<React.SetStateAction<DateState>>;
+}
 
+export default function Datepicker({
+  dateState,
+  setDateState,
+}: DatepickerProps) {
+  const [activeMonths, setActiveMonths] = useImmer<MonthType[]>(() =>
+    getInitialMonths(2, null)
+  );
   const {
-    firstDayOfWeek,
-    activeMonths,
     isDateSelected,
     isDateHovered,
     isFirstOrLastSelectedDate,
@@ -43,21 +40,19 @@ export default function Datepicker() {
     onDateHover,
     onDateSelect,
     onDateFocus,
-    goToPreviousMonths,
-    goToNextMonths,
   } = useDatepicker({
-    startDate: state.startDate,
-    endDate: state.endDate,
-    focusedInput: state.focusedInput,
+    startDate: dateState.startDate,
+    endDate: dateState.endDate,
+    focusedInput: dateState.focusedInput,
     onDatesChange: handleDateChange,
     changeActiveMonthOnSelect: false,
   });
 
   function handleDateChange(data: DateState) {
     if (!data.focusedInput) {
-      setState({ ...data, focusedInput: START_DATE });
+      setDateState({ ...data, focusedInput: START_DATE });
     } else {
-      setState(data);
+      setDateState(data);
     }
   }
 
@@ -73,26 +68,20 @@ export default function Datepicker() {
         onDateSelect,
         onDateFocus,
         onDateHover,
+        activeMonths,
+        setActiveMonths,
       }}
     >
-      <button onClick={goToPreviousMonths}>prev</button>
-      <button onClick={goToNextMonths}>Next</button>
-
       <Box
         sx={{
           display: "grid",
           margin: "32px 0 0",
-          gridTemplateColumns: `repeat(${activeMonths.length}, 300px)`,
+          gridTemplateColumns: `repeat(${activeMonths.length}, 240px)`,
           gridGap: "0 64px",
         }}
       >
-        {controlledActiveMonths.map((month) => (
-          <Month
-            key={`${month.year}-${month.month}`}
-            year={month.year}
-            month={month.month}
-            firstDayOfWeek={firstDayOfWeek}
-          />
+        {activeMonths.map((month, index) => (
+          <Month key={`${month.month}-${month.year}`} index={index} />
         ))}
       </Box>
     </DatepickerContext.Provider>
