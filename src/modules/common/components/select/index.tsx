@@ -74,13 +74,16 @@ export default function Select<TValue = string>({
         <chakra.label {...getLabelProps()}>{label}</chakra.label>
       </VisuallyHidden>
       <chakra.button
-        {...getButtonProps({ ref: setReferenceElement })}
+        {...getButtonProps({
+          ref: setReferenceElement,
+          "aria-labelledby": `${name}-selected`,
+        })}
         display="flex"
         alignItems="center"
         p={0}
       >
         {StartIcon ? StartIcon : null}
-        <Text ml={StartIcon ? 2 : 0} mr={2} as="span">
+        <Text ml={StartIcon ? 2 : 0} mr={2} as="span" id={`${name}-selected`}>
           {getSelectedValueLabel(value, options) ?? placeholder}
         </Text>
         <ChevronDownIcon />
