@@ -72,7 +72,7 @@ test("empty response gives an empty div with table headers", async () => {
 
 test("upcoming filter filters out upcoming launches", async () => {
   render(<Launches />);
-  const selectButton = screen.getByRole("button");
+  const selectButton = screen.getByRole("button", { name: /all launches/i });
   expect(screen.queryByTestId("loading")).toBeInTheDocument();
   await waitFor(() => {
     expect(screen.queryByTestId("loading")).not.toBeInTheDocument();
@@ -88,7 +88,7 @@ test("upcoming filter filters out upcoming launches", async () => {
 
 test("success filter filters out successful launches", async () => {
   render(<Launches />);
-  const selectButton = screen.getByRole("button");
+  const selectButton = screen.getByRole("button", { name: /all launches/i });
   expect(screen.queryByTestId("loading")).toBeInTheDocument();
   await waitFor(() => {
     expect(screen.queryByTestId("loading")).not.toBeInTheDocument();
@@ -104,7 +104,7 @@ test("success filter filters out successful launches", async () => {
 
 test("fail filter filters out failed launches", async () => {
   render(<Launches />);
-  const selectButton = screen.getByRole("button");
+  const selectButton = screen.getByRole("button", { name: /all launches/i });
   expect(screen.queryByTestId("loading")).toBeInTheDocument();
   await waitFor(() => {
     expect(screen.queryByTestId("loading")).not.toBeInTheDocument();
