@@ -72,14 +72,14 @@ function Day({ dayLabel, date }: DayProps) {
           selectedFirstOrLastColor: "#FFFFFF",
           normalColor: "#001217",
           selectedColor: "#FFFFFF",
-          rangeHoverColor: "#FFFFFF",
+          rangeHoverColor: "#333",
           disabledColor: "#808285",
         }),
         bg: getColorFn({
-          selectedFirstOrLastColor: "#00aeef",
+          selectedFirstOrLastColor: "gray.500",
           normalColor: "#FFFFFF",
-          selectedColor: "#71c9ed",
-          rangeHoverColor: "#71c9ed",
+          selectedColor: "gray.400",
+          rangeHoverColor: "gray.300",
           disabledColor: "#FFFFFF",
         }),
       }}
