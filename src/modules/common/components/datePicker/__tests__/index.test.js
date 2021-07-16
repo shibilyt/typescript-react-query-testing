@@ -152,8 +152,8 @@ describe("Datepicker", () => {
 
     const startMonth = screen.getByTestId("start-month-days");
     const endMonth = screen.getByTestId("end-month-days");
-    const startDay = "05";
-    const endDay = "11";
+    const startDay = 5;
+    const endDay = 11;
 
     userEvent.click(within(startMonth).getByRole("button", { name: startDay }));
     expect(startDate).not.toBeNull();
@@ -178,8 +178,8 @@ describe("Datepicker", () => {
     userEvent.click(within(endMonth).getByRole("button", { name: endDay }));
     expect(endDate).not.toBeNull();
 
-    const nextStartDate = setDate(initialMonths[0].date, +startDay);
-    const nextEndDate = setDate(initialMonths[1].date, +endDay);
+    const nextStartDate = setDate(initialMonths[0].date, startDay);
+    const nextEndDate = setDate(initialMonths[1].date, endDay);
     expect(startDate).toEqual(nextStartDate);
     expect(endDate).toEqual(nextEndDate);
   });
