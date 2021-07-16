@@ -191,11 +191,5 @@ describe("MonthYearSelect", () => {
     userEvent.click(downArrow);
 
     expect(startMonth).toEqual(0);
-    // const upArrow = screen.getByTestId("select-prev");
-    // const downArrow = screen.getByTestId("select-next");
-
-    // userEvent.click();
-    // expect(month).toEqual(1);
-    // expect(year).toEqual(2021);
   });
 });

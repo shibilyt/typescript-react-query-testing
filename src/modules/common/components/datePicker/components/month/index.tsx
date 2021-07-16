@@ -1,14 +1,14 @@
 import * as React from "react";
 import { Box, chakra, HStack } from "@chakra-ui/react";
 import {
-  FirstDayOfWeek,
   getDateMonthAndYear,
   MonthType,
   useMonth,
 } from "@datepicker-react/hooks";
 import Day from "../day";
 import MonthYearSelect from "../monthYearSelect";
-import { setMonth, setYear } from "date-fns/esm";
+import setMonth from "date-fns/setMonth";
+import setYear from "date-fns/setYear";
 import datepickerContext from "../../context";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 
@@ -109,7 +109,7 @@ function Month({ index }: MonthProps) {
           </chakra.button>
         ) : null}
         <MonthYearSelect
-          name="starting-month"
+          name={index === 0 ? "start-month" : "end-month"}
           type="month"
           disableFrom={disableMonthFrom}
           disableTo={disableMonthTo}
@@ -131,7 +131,7 @@ function Month({ index }: MonthProps) {
           }}
         />
         <MonthYearSelect
-          name="starting-year"
+          name={index === 0 ? "start-year" : "end-year"}
           type="year"
           value={activeMonth.year}
           disableFrom={disableYearFrom}
@@ -171,6 +171,7 @@ function Month({ index }: MonthProps) {
           gridTemplateColumns: "repeat(7, 1fr)",
           justifyContent: "center",
         }}
+        data-testid={index === 0 ? "start-month-days" : "end-month-days"}
       >
         {days.map((day, index) => {
           if (typeof day === "object") {

@@ -89,6 +89,7 @@ export default function MonthYearSelect({
         justifyContent="flex-end"
         p={0}
         w={type === "month" ? "104px" : "80px"}
+        data-testid={name}
       >
         <Text
           mr={1}
