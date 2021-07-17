@@ -26,7 +26,6 @@ export function launchesResolver(
     if (query?.upcoming) {
       resolvedLaunches = resolvedLaunches.filter((launch) => launch.upcoming);
     }
-    console.time("resolve");
     if (query && query.date_utc) {
       resolvedLaunches = resolvedLaunches.filter((launch) => {
         if (!query.date_utc?.$gte) return false;
@@ -41,7 +40,6 @@ export function launchesResolver(
         return isGte && isLte;
       });
     }
-    console.timeEnd("resolve");
     return res(
       ctx.json({
         docs: [...resolvedLaunches],

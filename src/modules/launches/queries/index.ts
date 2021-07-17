@@ -17,7 +17,22 @@ export function useGetLaunches(
       .post(key, {
         ...getQueryFromFilter(launchFilter),
         options: {
-          populate: ["launchpad", "rocket", "payloads"],
+          populate: [
+            { path: "launchpad", select: "name" },
+            { path: "rocket", select: "name" },
+            { path: "payloads", select: "orbit" },
+          ],
+          select: [
+            "id",
+            "name",
+            "flight_number",
+            "date_utc",
+            "launchpad",
+            "payloads",
+            "success",
+            "upcoming",
+            "rocket",
+          ],
         },
       })
       .then((response) => response.data)
