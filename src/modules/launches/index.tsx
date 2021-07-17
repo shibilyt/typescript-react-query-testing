@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { Badge, Box } from "@chakra-ui/react";
 import { CellProps, Column } from "react-table";
 import format from "date-fns/format";
@@ -10,11 +10,12 @@ import DateFilter from "./components/dateFilter";
 import { Filter as FilterIcon } from "assets/Filter";
 import { useGetLaunches } from "./queries";
 import { getFormatString, getStatusOfLaunch } from "./utils";
+import useQueryParams from "modules/common/hooks/useQueryParams";
 
 import { filterStates, SpaceXApiResponse } from "./types";
 import {
   DateFilterType,
-  filterStatuses,
+  filterStatuses as dateFilterStatuses,
 } from "modules/launches/components/dateFilter/types";
 
 const columns: Column<SpaceXApiResponse>[] = [
@@ -97,17 +98,64 @@ const filterOptions = [
   { label: "Failed Launches", value: filterStates.failed },
 ];
 
-const initialFilterStatus = filterStatuses.pastSixMonths;
-
 export default function Launches() {
+  const history = useHistory();
   const { id } = useParams<{ id: string }>();
-  console.log(id);
 
-  const [filterSelected, setFilterSelected] = React.useState(filterStates.all);
-  const [dateFilter, setDateFilter] = React.useState<DateFilterType>({
-    startDate: null,
-    endDate: null,
-  });
+  const queryParams: any = useQueryParams();
+
+  const [statusFilter, setStatusFilter] = React.useState(
+    () => queryParams.get("statusFilter") || filterStates.all
+  );
+
+  const initialDateFilter = () => {
+    if (queryParams.get("dateFilterStatus") == null) {
+      return {
+        startDate: new Date(queryParams.get("startDate")),
+        endDate: queryParams.get("endDate")
+          ? new Date(queryParams.get("endDate"))
+          : null,
+      };
+    }
+    return {
+      startDate: null,
+      endDate: null,
+    };
+  };
+
+  const [dateFilter, setDateFilter] =
+    React.useState<DateFilterType>(initialDateFilter);
+
+  const initialDateFilterRange = () => {
+    if (queryParams.get("dateFilterStatus"))
+      return queryParams.get("dateFilterStatus");
+    if (queryParams.get("startDate"))
+      return `${queryParams.get("startDate")} - ${
+        queryParams.get("endDate") || "Upcoming"
+      }`;
+    return dateFilterStatuses.pastSixMonths;
+  };
+
+  const [dateFilterRange, setDateFilterRange] = React.useState(
+    initialDateFilterRange
+  );
+
+  React.useEffect(() => {
+    let query = `?statusFilter=${statusFilter}`;
+    if (Object.values(dateFilterStatuses).includes(dateFilterRange)) {
+      query = query + `&dateFilterStatus=${dateFilterRange}`;
+    } else {
+      const { startDate, endDate } = dateFilter;
+      query =
+        query +
+        `${!!startDate ? `&startDate=${format(startDate, "d MMM yyyy")}` : ""}`;
+      query =
+        query +
+        `${!!endDate ? `&endDate=${format(endDate, "d MMM yyyy")}` : ""}`;
+    }
+
+    history.push(query);
+  }, [statusFilter, history, dateFilterRange, dateFilter]);
 
   const {
     data: launchData,
@@ -115,7 +163,7 @@ export default function Launches() {
     error,
     refetch,
   } = useGetLaunches({
-    filter: filterSelected,
+    filter: statusFilter,
     ...(dateFilter.startDate
       ? {
           date: {
@@ -137,15 +185,16 @@ export default function Launches() {
         <DateFilter
           dateFilter={dateFilter}
           setDateFilter={setDateFilter}
-          initialFilterStatus={initialFilterStatus}
+          filterRange={dateFilterRange}
+          setFilterRange={setDateFilterRange}
         />
         <Select
           options={filterOptions}
           name="filter-select"
           label="filter"
-          value={filterSelected}
+          value={statusFilter}
           onChange={(option) => {
-            setFilterSelected(option.value);
+            setStatusFilter(option.value);
           }}
           startIcon={<FilterIcon />}
         />

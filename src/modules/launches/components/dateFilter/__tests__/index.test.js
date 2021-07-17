@@ -11,7 +11,7 @@ describe("DateFilter ", () => {
   test("initial filter sets correct dateState", () => {
     let startDate = null;
     let endDate = null;
-    let initialFilterStatus = filterStatuses.pastThreeMonths;
+    let filterRange = filterStatuses.pastThreeMonths;
     render(
       <DateFilter
         dateFilter={{
@@ -24,13 +24,16 @@ describe("DateFilter ", () => {
             endDate = data.endDate;
           });
         }}
-        initialFilterStatus={initialFilterStatus}
+        filterRange={filterRange}
+        setFilterRange={(range) =>
+          act(() => {
+            filterRange = range;
+          })
+        }
       />
     );
 
-    expect(screen.getByTestId("date-filter")).toHaveTextContent(
-      initialFilterStatus
-    );
+    expect(screen.getByTestId("date-filter")).toHaveTextContent(filterRange);
 
     // past 3 months
     const endDay = new Date();
@@ -42,8 +45,8 @@ describe("DateFilter ", () => {
   test("selecting options in the DateFilter updates state", () => {
     let startDate = null;
     let endDate = null;
-    let initialFilterStatus = filterStatuses.pastSixMonths;
-    render(
+    let filterRange = filterStatuses.pastSixMonths;
+    const { rerender } = render(
       <DateFilter
         dateFilter={{
           startDate,
@@ -55,17 +58,41 @@ describe("DateFilter ", () => {
             endDate = data.endDate;
           });
         }}
-        initialFilterStatus={initialFilterStatus}
+        filterRange={filterRange}
+        setFilterRange={(range) => {
+          act(() => {
+            filterRange = range;
+          });
+        }}
       />
     );
 
-    expect(screen.getByTestId("date-filter")).toHaveTextContent(
-      initialFilterStatus
-    );
+    expect(screen.getByTestId("date-filter")).toHaveTextContent(filterRange);
 
     userEvent.click(screen.getByTestId("date-filter"));
 
     userEvent.click(screen.getByRole("button", { name: /past week/i }));
+
+    rerender(
+      <DateFilter
+        dateFilter={{
+          startDate,
+          endDate,
+        }}
+        setDateFilter={(data) => {
+          act(() => {
+            startDate = data.startDate;
+            endDate = data.endDate;
+          });
+        }}
+        filterRange={filterRange}
+        setFilterRange={(range) => {
+          act(() => {
+            filterRange = range;
+          });
+        }}
+      />
+    );
 
     expect(screen.getByTestId("date-filter")).toHaveTextContent(
       filterStatuses.pastWeek
@@ -79,7 +106,7 @@ describe("DateFilter ", () => {
   test("selecting date ranges from the active months set date states", () => {
     let startDate = null;
     let endDate = null;
-    let initialFilterStatus = filterStatuses.pastSixMonths;
+    let filterRange = filterStatuses.pastSixMonths;
     const { rerender } = render(
       <DateFilter
         dateFilter={{
@@ -92,13 +119,16 @@ describe("DateFilter ", () => {
             endDate = data.endDate;
           });
         }}
-        initialFilterStatus={initialFilterStatus}
+        filterRange={filterRange}
+        setFilterRange={(range) => {
+          act(() => {
+            filterRange = range;
+          });
+        }}
       />
     );
 
-    expect(screen.getByTestId("date-filter")).toHaveTextContent(
-      initialFilterStatus
-    );
+    expect(screen.getByTestId("date-filter")).toHaveTextContent(filterRange);
 
     userEvent.click(screen.getByTestId("date-filter"));
 
@@ -124,7 +154,12 @@ describe("DateFilter ", () => {
             endDate = data.endDate;
           });
         }}
-        initialFilterStatus={initialFilterStatus}
+        filterRange={filterRange}
+        setFilterRange={(range) => {
+          act(() => {
+            filterRange = range;
+          });
+        }}
       />
     );
 

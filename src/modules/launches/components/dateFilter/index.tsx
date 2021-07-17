@@ -32,24 +32,23 @@ import format from "date-fns/format";
 interface DateFilterProps {
   dateFilter: DateFilterType;
   setDateFilter: (data: DateFilterType) => void;
-  initialFilterStatus?: string;
+  filterRange: string;
+  setFilterRange: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function DateFilter({
   dateFilter,
   setDateFilter,
-  initialFilterStatus = filterStatuses.pastSixMonths,
+  filterRange,
+  setFilterRange,
 }: DateFilterProps) {
   const [focusedInput, setFocusedInput] =
     React.useState<FocusedInput>(START_DATE);
 
-  const [filterStatus, setFilterStatus] =
-    React.useState<string>(initialFilterStatus);
-
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   React.useEffect(() => {
-    switch (initialFilterStatus) {
+    switch (filterRange) {
       case filterStatuses.pastWeek: {
         handlePastWeekClick();
         break;
@@ -78,13 +77,13 @@ export default function DateFilter({
         break;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialFilterStatus]);
+  }, [filterRange]);
 
   const handleDateStateChange = ({ focusedInput, ...data }: DateState) => {
     setFocusedInput(focusedInput);
     setDateFilter(data);
     if (data.startDate)
-      setFilterStatus(
+      setFilterRange(
         `${format(data.startDate, "d MMM yyyy")} - ${
           data.endDate ? format(data.endDate, "d MMM yyyy") : "Upcoming"
         }`
@@ -108,7 +107,7 @@ export default function DateFilter({
         ? getDateMonthAndYear(addMonths(endDate, 1))
         : getDateMonthAndYear(endDate);
     });
-    setFilterStatus(filterStatuses.pastWeek);
+    setFilterRange(filterStatuses.pastWeek);
   };
 
   const handlePastMonthClick = () => {
@@ -122,7 +121,7 @@ export default function DateFilter({
       draft[0] = getDateMonthAndYear(startDate);
       draft[1] = getDateMonthAndYear(endDate);
     });
-    setFilterStatus(filterStatuses.pastMonth);
+    setFilterRange(filterStatuses.pastMonth);
   };
 
   const handlePastThreeMonthsClick = () => {
@@ -136,7 +135,7 @@ export default function DateFilter({
       draft[0] = getDateMonthAndYear(startDate);
       draft[1] = getDateMonthAndYear(endDate);
     });
-    setFilterStatus(filterStatuses.pastThreeMonths);
+    setFilterRange(filterStatuses.pastThreeMonths);
   };
 
   const handlePastSixMonthsClick = () => {
@@ -150,7 +149,7 @@ export default function DateFilter({
       draft[0] = getDateMonthAndYear(startDate);
       draft[1] = getDateMonthAndYear(endDate);
     });
-    setFilterStatus(filterStatuses.pastSixMonths);
+    setFilterRange(filterStatuses.pastSixMonths);
   };
 
   const handlePastYearClick = () => {
@@ -164,7 +163,7 @@ export default function DateFilter({
       draft[0] = getDateMonthAndYear(startDate);
       draft[1] = getDateMonthAndYear(endDate);
     });
-    setFilterStatus(filterStatuses.pastYear);
+    setFilterRange(filterStatuses.pastYear);
   };
 
   const handlePastTwoYearClick = () => {
@@ -178,7 +177,7 @@ export default function DateFilter({
       draft[0] = getDateMonthAndYear(startDate);
       draft[1] = getDateMonthAndYear(endDate);
     });
-    setFilterStatus(filterStatuses.pastTwoYear);
+    setFilterRange(filterStatuses.pastTwoYear);
   };
 
   return (
@@ -192,7 +191,7 @@ export default function DateFilter({
       >
         <CalendarIcon />
         <Text as="span" mx="2">
-          {filterStatus}
+          {filterRange}
         </Text>
         <ChevronDownIcon />
       </chakra.button>
@@ -214,7 +213,7 @@ export default function DateFilter({
               <chakra.button
                 my={1}
                 fontWeight={
-                  filterStatus === filterStatuses.pastWeek ? "600" : "500"
+                  filterRange === filterStatuses.pastWeek ? "600" : "500"
                 }
                 onClick={handlePastWeekClick}
               >
@@ -223,7 +222,7 @@ export default function DateFilter({
               <chakra.button
                 my={1}
                 fontWeight={
-                  filterStatus === filterStatuses.pastMonth ? "600" : "500"
+                  filterRange === filterStatuses.pastMonth ? "600" : "500"
                 }
                 onClick={handlePastMonthClick}
               >
@@ -232,9 +231,7 @@ export default function DateFilter({
               <chakra.button
                 my={1}
                 fontWeight={
-                  filterStatus === filterStatuses.pastThreeMonths
-                    ? "600"
-                    : "500"
+                  filterRange === filterStatuses.pastThreeMonths ? "600" : "500"
                 }
                 onClick={handlePastThreeMonthsClick}
               >
@@ -243,7 +240,7 @@ export default function DateFilter({
               <chakra.button
                 my={1}
                 fontWeight={
-                  filterStatus === filterStatuses.pastSixMonths ? "600" : "500"
+                  filterRange === filterStatuses.pastSixMonths ? "600" : "500"
                 }
                 onClick={handlePastSixMonthsClick}
               >
@@ -252,7 +249,7 @@ export default function DateFilter({
               <chakra.button
                 my={1}
                 fontWeight={
-                  filterStatus === filterStatuses.pastYear ? "600" : "500"
+                  filterRange === filterStatuses.pastYear ? "600" : "500"
                 }
                 onClick={handlePastYearClick}
               >
@@ -261,7 +258,7 @@ export default function DateFilter({
               <chakra.button
                 my={1}
                 fontWeight={
-                  filterStatus === filterStatuses.pastTwoYear ? "600" : "500"
+                  filterRange === filterStatuses.pastTwoYear ? "600" : "500"
                 }
                 onClick={handlePastTwoYearClick}
               >
