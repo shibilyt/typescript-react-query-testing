@@ -20,7 +20,7 @@ export type LaunchQueryType = {
 };
 
 type DateRange = {
-  $gte?: string;
+  $gte: string;
   $lte?: string;
 };
 

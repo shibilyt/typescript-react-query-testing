@@ -1,4 +1,4 @@
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { server } from "test/mocks/server";
@@ -18,7 +18,7 @@ test("useGetLaunches returns launch data with filters", async () => {
     useGetLaunches({ filter })
   );
   await waitForNextUpdate();
-  expect(result.current.data.docs).toHaveLength(12);
+  expect(result.current.data.docs).toHaveLength(13);
   filter = "upcoming";
   rerender();
   await waitFor(() => {
@@ -30,13 +30,13 @@ test("useGetLaunches returns launch data with filters", async () => {
   await waitFor(() => {
     expect(result.current.status).toEqual("success");
   });
-  expect(result.current.data.docs).toHaveLength(0);
+  expect(result.current.data.docs).toHaveLength(4);
   filter = "failed";
   rerender();
   await waitFor(() => {
     expect(result.current.status).toEqual("success");
   });
-  expect(result.current.data.docs).toHaveLength(3);
+  expect(result.current.data.docs).toHaveLength(0);
 });
 
 test("Launches table displays data from the response", async () => {
@@ -48,7 +48,8 @@ test("Launches table displays data from the response", async () => {
   await waitFor(() => {
     expect(screen.queryByTestId("loading")).not.toBeInTheDocument();
   });
-  expect(screen.getAllByRole("row")).toHaveLength(13);
+  // default date range is past 6 months which has 4 launches
+  expect(screen.getAllByRole("row")).toHaveLength(5);
 });
 
 test("empty response gives an empty div with table headers", async () => {
@@ -83,7 +84,8 @@ test("upcoming filter filters out upcoming launches", async () => {
   await waitFor(() => {
     expect(screen.queryByTestId("loading")).not.toBeInTheDocument();
   });
-  expect(screen.getAllByRole("row")).toHaveLength(10);
+  // default date filter is past 6 months. So no upcoming.
+  expect(screen.getAllByRole("row")).toHaveLength(1);
 });
 
 test("success filter filters out successful launches", async () => {
@@ -99,7 +101,7 @@ test("success filter filters out successful launches", async () => {
   await waitFor(() => {
     expect(screen.queryByTestId("loading")).not.toBeInTheDocument();
   });
-  expect(screen.getAllByRole("row")).toHaveLength(1);
+  expect(screen.getAllByRole("row")).toHaveLength(5);
 });
 
 test("fail filter filters out failed launches", async () => {
@@ -115,5 +117,5 @@ test("fail filter filters out failed launches", async () => {
   await waitFor(() => {
     expect(screen.queryByTestId("loading")).not.toBeInTheDocument();
   });
-  expect(screen.getAllByRole("row")).toHaveLength(4);
+  expect(screen.getAllByRole("row")).toHaveLength(1);
 });
