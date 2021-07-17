@@ -2,7 +2,7 @@ export type FilterType = {
   filter: string;
   date?: {
     start: string;
-    end: string;
+    end?: string;
   };
 };
 
@@ -20,7 +20,7 @@ export type LaunchQueryType = {
 };
 
 type DateRange = {
-  $gte?: string;
+  $gte: string;
   $lte?: string;
 };
 

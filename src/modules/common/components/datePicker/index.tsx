@@ -1,35 +1,36 @@
 import * as React from "react";
 import { Box } from "@chakra-ui/react";
 import {
-  FocusedInput,
   getInitialMonths,
   MonthType,
   START_DATE,
   useDatepicker,
 } from "@datepicker-react/hooks";
 
-import { useImmer } from "use-immer";
+import { Updater, useImmer } from "use-immer";
 import Month from "./components/month";
 import DatepickerContext from "./context";
+import { DateState } from "./types";
 
-interface DateState {
-  startDate: Date | null;
-  endDate: Date | null;
-  focusedInput: FocusedInput;
-}
+export type { DateState };
 
 interface DatepickerProps {
   dateState: DateState;
-  setDateState: React.Dispatch<React.SetStateAction<DateState>>;
+  setDateState: (data: DateState) => void;
+  activeMonths?: MonthType[];
+  setMonths?: Updater<MonthType[]>;
 }
 
 export default function Datepicker({
   dateState,
   setDateState,
+  activeMonths: controlledActiveMonths,
+  setMonths,
 }: DatepickerProps) {
   const [activeMonths, setActiveMonths] = useImmer<MonthType[]>(() =>
     getInitialMonths(2, null)
   );
+
   const {
     isDateSelected,
     isDateHovered,
@@ -68,21 +69,26 @@ export default function Datepicker({
         onDateSelect,
         onDateFocus,
         onDateHover,
-        activeMonths,
-        setActiveMonths,
+        activeMonths:
+          controlledActiveMonths != null
+            ? controlledActiveMonths
+            : activeMonths,
+        setActiveMonths: setMonths != null ? setMonths : setActiveMonths,
       }}
     >
       <Box
         sx={{
           display: "grid",
-          margin: "32px 0 0",
+          margin: "0",
           gridTemplateColumns: `repeat(${activeMonths.length}, 240px)`,
-          gridGap: "0 64px",
+          gridGap: "0 48px",
         }}
       >
-        {activeMonths.map((month, index) => (
-          <Month key={`${month.month}-${month.year}`} index={index} />
-        ))}
+        {(controlledActiveMonths ? controlledActiveMonths : activeMonths).map(
+          (month, index) => (
+            <Month key={`${month.month}-${month.year}`} index={index} />
+          )
+        )}
       </Box>
     </DatepickerContext.Provider>
   );

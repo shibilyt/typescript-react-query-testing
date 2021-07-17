@@ -13,7 +13,7 @@ export function getQueryFromFilter({ filter, date }: FilterType) {
   if (date)
     query.date_utc = {
       $gte: date.start,
-      $lte: date.end,
+      ...(date.end ? { $lte: date.end } : {}),
     };
 
   return {

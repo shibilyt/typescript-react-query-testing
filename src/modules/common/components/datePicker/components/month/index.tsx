@@ -5,12 +5,15 @@ import {
   MonthType,
   useMonth,
 } from "@datepicker-react/hooks";
-import Day from "../day";
-import MonthYearSelect from "../monthYearSelect";
 import setMonth from "date-fns/setMonth";
 import setYear from "date-fns/setYear";
-import datepickerContext from "../../context";
+import format from "date-fns/format";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+
+import datepickerContext from "../../context";
+
+import Day from "../day";
+import MonthYearSelect from "../monthYearSelect";
 
 interface MonthProps {
   index: number;
@@ -25,6 +28,7 @@ function Month({ index }: MonthProps) {
     year: year,
     month: month,
     firstDayOfWeek: 0,
+    dayLabelFormat: (date: Date) => format(date, "d"),
   });
 
   const isSameYear = activeMonths[0].year === activeMonths[1].year;
@@ -104,8 +108,16 @@ function Month({ index }: MonthProps) {
         }}
       >
         {index === 0 ? (
-          <chakra.button>
-            <ChevronLeftIcon />
+          <chakra.button
+            onClick={() => {
+              if (month === 0) {
+                handleMoveToPrevYear(activeMonth);
+              } else {
+                handleMonthChange(month - 1);
+              }
+            }}
+          >
+            <ChevronLeftIcon h={6} w={6} color="gray.500" />
           </chakra.button>
         ) : null}
         <MonthYearSelect
@@ -145,8 +157,16 @@ function Month({ index }: MonthProps) {
           }}
         />
         {index === 1 ? (
-          <chakra.button>
-            <ChevronRightIcon />
+          <chakra.button
+            onClick={() => {
+              if (month === 11) {
+                handleMoveToNextYear(activeMonth);
+              } else {
+                handleMonthChange(month + 1);
+              }
+            }}
+          >
+            <ChevronRightIcon h={6} w={6} color="gray.500" />
           </chakra.button>
         ) : null}
       </HStack>
@@ -157,6 +177,7 @@ function Month({ index }: MonthProps) {
           justifyContent: "center",
           marginBottom: "10px",
           fontWeight: "600",
+          mx: 0,
         }}
       >
         {weekdayLabels.map((dayLabel) => (
@@ -170,6 +191,7 @@ function Month({ index }: MonthProps) {
           display: "grid",
           gridTemplateColumns: "repeat(7, 1fr)",
           justifyContent: "center",
+          mx: 0,
         }}
         data-testid={index === 0 ? "start-month-days" : "end-month-days"}
       >
