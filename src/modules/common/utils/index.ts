@@ -1,5 +1,6 @@
 import * as React from "react";
 import warning from "warning";
+import computeScrollIntoView from "compute-scroll-into-view";
 
 export type OptionType = {
   label: string;
@@ -107,6 +108,22 @@ export function match<
   );
   if (Error.captureStackTrace) Error.captureStackTrace(error, match);
   throw error;
+}
+
+export function scrollIntoView(node: any, menuNode: any) {
+  if (!node) {
+    return;
+  }
+
+  const actions = computeScrollIntoView(node, {
+    boundary: menuNode,
+    block: "nearest",
+    scrollMode: "if-needed",
+  });
+  actions.forEach(({ el, top, left }) => {
+    el.scrollTop = top;
+    el.scrollLeft = left;
+  });
 }
 
 export function useWindowEvent<TType extends keyof WindowEventMap>(

@@ -142,8 +142,10 @@ export default function MonthYearSelect({
           sx={{
             ...styles.popper,
             boxShadow: "0px 1px 3px 0px #0000001A",
+            width: "calc(100% + 16px)",
+            height: 64,
+            overflowY: "auto",
           }}
-          width="max-content"
           bg="white"
           rounded="md"
           py={1}
