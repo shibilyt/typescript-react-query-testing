@@ -93,6 +93,7 @@ export default function Table<T extends Record<string, any>>(
         borderRadius="md"
         overflow="hidden"
         boxShadow="base"
+        minH="668px"
       >
         <ErrorBoundary FallbackComponent={ErrorFallback}>
           <ChakraTable
