@@ -5,6 +5,7 @@ import {
   isFocusableElement,
   keyCode,
   useWindowEvent,
+  scrollIntoView,
   useControlledSwitchWarning,
   useOnChangeReadOnlyWarning,
 } from "../../utils";
@@ -291,6 +292,10 @@ export default function useSelect<TValue>({
       highlightIndex(0);
     }
   }, [highlightIndex, isOpen]);
+
+  React.useEffect(() => {
+    scrollIntoView(optionRefs.current[highlightedIndex], listRef.current);
+  }, [highlightedIndex]);
 
   useWindowEvent("mousedown", (event) => {
     let target = event.target as HTMLElement;
