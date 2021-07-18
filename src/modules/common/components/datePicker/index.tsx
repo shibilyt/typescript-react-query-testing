@@ -80,8 +80,8 @@ export default function Datepicker({
         sx={{
           display: "grid",
           margin: "0",
-          gridTemplateColumns: `repeat(${activeMonths.length}, 240px)`,
-          gridGap: "0 48px",
+          gridTemplateColumns: `repeat(${activeMonths.length}, 250px)`,
+          gridGap: "0 16px",
         }}
       >
         {(controlledActiveMonths ? controlledActiveMonths : activeMonths).map(

@@ -198,11 +198,10 @@ export default function DateFilter({
       <Modal isOpen={isOpen} onClose={onClose} isCentered size="3xl">
         <ModalOverlay />
         <ModalContent>
-          <ModalBody py={4} px={4} d="flex">
+          <ModalBody p={6} d="flex">
             <Box
               w={48}
               minH="100%"
-              my={3}
               mr={4}
               borderRight="1px"
               borderColor="nitroGray.200"

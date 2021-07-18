@@ -105,12 +105,13 @@ export default function MonthYearSelect({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              if (typeof disableTo === "number" && value - 1 <= disableTo) {
+              if (typeof disableFrom === "number" && value + 1 >= disableFrom) {
                 return;
               }
-              getPrev();
+              getNext();
             }}
-            data-testid="select-prev"
+            data-testid="select-next"
+            aria-label={`select next ${type}`}
             width={3}
             height="10px"
             lineHeight={"10px"}
@@ -120,12 +121,13 @@ export default function MonthYearSelect({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              if (typeof disableFrom === "number" && value + 1 >= disableFrom) {
+              if (typeof disableTo === "number" && value - 1 <= disableTo) {
                 return;
               }
-              getNext();
+              getPrev();
             }}
-            data-testid="select-next"
+            data-testid="select-prev"
+            aria-label={`select previous ${type}`}
             width={3}
             height="10px"
             lineHeight={"10px"}
