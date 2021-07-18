@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useTable } from "react-table";
+import { usePagination, useTable } from "react-table";
 import {
   Table as ChakraTable,
   Thead,
@@ -14,21 +14,34 @@ import {
 } from "@chakra-ui/react";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 import { Loader } from "assets/Loader";
+import Pagination from "./components/pagination";
 
 import { TableProperties, tableStates } from "./types";
 
-export default function Table<T extends Record<string, unknown>>(
+export default function Table<T extends Record<string, any>>(
   props: React.PropsWithChildren<
     TableProperties<T> & {
       isLoading?: Boolean;
       emptyMessage?: string;
       error?: unknown;
       resetErrorHandler?: () => void;
+      page: number;
+      pageCount: number;
+      onPageChange: (page: number) => void;
     }
   >
 ): React.ReactElement {
-  const { columns, data, isLoading, emptyMessage, error, resetErrorHandler } =
-    props;
+  const {
+    columns,
+    data,
+    isLoading,
+    emptyMessage,
+    error,
+    resetErrorHandler,
+    page: initialPage,
+    pageCount: controlledPageCount,
+    onPageChange,
+  } = props;
 
   if (error && !resetErrorHandler) {
     throw new Error(
@@ -36,11 +49,34 @@ export default function Table<T extends Record<string, unknown>>(
     );
   }
 
-  const { getTableProps, getTableBodyProps, prepareRow, rows, headerGroups } =
-    useTable<T>({
+  const {
+    getTableProps,
+    getTableBodyProps,
+    prepareRow,
+    page,
+    headerGroups,
+    pageCount,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    gotoPage,
+    nextPage,
+    previousPage,
+    state: { pageIndex },
+  } = useTable<T>(
+    {
       columns,
       data,
-    });
+      initialState: { pageIndex: initialPage },
+      manualPagination: true,
+      pageCount: controlledPageCount,
+    },
+    usePagination
+  );
+
+  React.useEffect(() => {
+    onPageChange(pageIndex);
+  }, [pageIndex, onPageChange]);
 
   const status = React.useMemo(() => {
     if (isLoading) return tableStates.loading;
@@ -50,96 +86,110 @@ export default function Table<T extends Record<string, unknown>>(
   }, [isLoading, data, error]);
 
   return (
-    <Box
-      border="1px solid"
-      borderColor="nitroGray.200"
-      borderRadius="md"
-      overflow="hidden"
-      boxShadow="base"
-    >
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
-        <ChakraTable
-          size="sm"
-          fontSize="sm"
-          variant="unstyled"
-          {...getTableProps()}
-        >
-          <Thead bg="nitroGray.100" h={8} color="nitroGray.600">
-            {headerGroups.map((headerGroup) => (
-              <Tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <Th
-                    fontWeight={"medium"}
-                    {...column.getHeaderProps()}
-                    fontSize={12}
-                    textTransform="capitalize"
-                  >
-                    {column.render("Header")}
-                  </Th>
-                ))}
-              </Tr>
-            ))}
-          </Thead>
-          {status === tableStates.haveData ? (
-            <Tbody {...getTableBodyProps()}>
-              {rows.map((row, i) => {
-                prepareRow(row);
-                return (
-                  <Tr {...row.getRowProps()}>
-                    {row.cells.map((cell) => {
-                      return (
-                        <Td
-                          fontSize={12}
-                          fontWeight="normal"
-                          lineHeight={1}
-                          border="none"
-                          py={5}
-                          color={"nitroGray.800"}
-                          {...cell.getCellProps()}
-                        >
-                          {cell.render("Cell")}
-                        </Td>
-                      );
-                    })}
-                  </Tr>
-                );
-              })}
-            </Tbody>
-          ) : null}
-        </ChakraTable>
-      </ErrorBoundary>
-      {status === tableStates.empty ? (
-        <chakra.div
-          minHeight="636px"
-          pt="12"
-          display="flex"
-          justifyContent="center"
-          color="nitroGray.700"
-          data-testid="empty-table"
-          role="alert"
-        >
-          {emptyMessage ? emptyMessage : "No data for the table"}
-        </chakra.div>
-      ) : null}
-      {status === tableStates.loading ? (
-        <chakra.div
-          minHeight="636px"
-          pt="12"
-          data-testid="loading"
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Loader />
-        </chakra.div>
-      ) : null}
-      {status === tableStates.error && resetErrorHandler ? (
-        <ErrorFallback
-          error={error as Error}
-          resetErrorBoundary={resetErrorHandler}
-        ></ErrorFallback>
-      ) : null}
-    </Box>
+    <>
+      <Box
+        border="1px solid"
+        borderColor="nitroGray.200"
+        borderRadius="md"
+        overflow="hidden"
+        boxShadow="base"
+      >
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <ChakraTable
+            size="sm"
+            fontSize="sm"
+            variant="unstyled"
+            {...getTableProps()}
+          >
+            <Thead bg="nitroGray.100" h={8} color="nitroGray.600">
+              {headerGroups.map((headerGroup) => (
+                <Tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map((column) => (
+                    <Th
+                      fontWeight={"medium"}
+                      {...column.getHeaderProps()}
+                      fontSize={12}
+                      textTransform="capitalize"
+                    >
+                      {column.render("Header")}
+                    </Th>
+                  ))}
+                </Tr>
+              ))}
+            </Thead>
+            {status === tableStates.haveData ? (
+              <Tbody {...getTableBodyProps()}>
+                {page.map((row, i) => {
+                  prepareRow(row);
+                  return (
+                    <Tr {...row.getRowProps()}>
+                      {row.cells.map((cell) => {
+                        return (
+                          <Td
+                            fontSize={12}
+                            fontWeight="normal"
+                            lineHeight={1}
+                            border="none"
+                            py={5}
+                            color={"nitroGray.800"}
+                            {...cell.getCellProps()}
+                          >
+                            {cell.render("Cell")}
+                          </Td>
+                        );
+                      })}
+                    </Tr>
+                  );
+                })}
+              </Tbody>
+            ) : null}
+          </ChakraTable>
+        </ErrorBoundary>
+        {status === tableStates.empty ? (
+          <chakra.div
+            minHeight="636px"
+            pt="12"
+            display="flex"
+            justifyContent="center"
+            color="nitroGray.700"
+            data-testid="empty-table"
+            role="alert"
+          >
+            {emptyMessage ? emptyMessage : "No data for the table"}
+          </chakra.div>
+        ) : null}
+        {status === tableStates.loading ? (
+          <chakra.div
+            minHeight="636px"
+            pt="12"
+            data-testid="loading"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Loader />
+          </chakra.div>
+        ) : null}
+        {status === tableStates.error && resetErrorHandler ? (
+          <ErrorFallback
+            error={error as Error}
+            resetErrorBoundary={resetErrorHandler}
+          ></ErrorFallback>
+        ) : null}
+      </Box>
+      <Box d="flex" justifyContent="flex-end">
+        <Pagination
+          page={pageIndex}
+          pageCount={pageCount}
+          canPreviousPage={canPreviousPage}
+          canNextPage={canNextPage}
+          pageOptions={pageOptions}
+          gotoPage={gotoPage}
+          nextPage={nextPage}
+          previousPage={previousPage}
+        />
+      </Box>
+    </>
   );
 }
 
