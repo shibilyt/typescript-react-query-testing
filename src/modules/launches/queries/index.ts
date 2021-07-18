@@ -9,10 +9,11 @@ export const launchesEndPoints = {
 };
 
 export function useGetLaunches(
-  launchFilter: FilterType = { filter: filterStates.all }
+  launchFilter: FilterType = { filter: filterStates.all },
+  page: number
 ) {
   const key = launchesEndPoints.getLaunches;
-  return useQuery<LaunchesQueryResponse>([key, launchFilter], () =>
+  return useQuery<LaunchesQueryResponse>([key, launchFilter, page], () =>
     axios
       .post(key, {
         ...getQueryFromFilter(launchFilter),
@@ -33,6 +34,10 @@ export function useGetLaunches(
             "upcoming",
             "rocket",
           ],
+          sort: {
+            flight_number: "asc",
+          },
+          page,
         },
       })
       .then((response) => response.data)

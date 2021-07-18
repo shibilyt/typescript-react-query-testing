@@ -157,22 +157,31 @@ export default function Launches() {
     history.push(query);
   }, [statusFilter, history, dateFilterRange, dateFilter]);
 
+  const [page, setPage] = React.useState(0);
+
+  const handlePageChange = React.useCallback((page: number) => {
+    setPage(page + 1);
+  }, []);
+
   const {
     data: launchData,
     isLoading,
     error,
     refetch,
-  } = useGetLaunches({
-    filter: statusFilter,
-    ...(dateFilter.startDate
-      ? {
-          date: {
-            start: dateFilter.startDate.toISOString(),
-            end: dateFilter.endDate?.toISOString(),
-          },
-        }
-      : {}),
-  });
+  } = useGetLaunches(
+    {
+      filter: statusFilter,
+      ...(dateFilter.startDate
+        ? {
+            date: {
+              start: dateFilter.startDate.toISOString(),
+              end: dateFilter.endDate?.toISOString(),
+            },
+          }
+        : {}),
+    },
+    page
+  );
 
   const data = React.useMemo(
     () => (launchData ? launchData.docs : []),
@@ -207,6 +216,9 @@ export default function Launches() {
         isLoading={isLoading}
         error={error}
         resetErrorHandler={refetch}
+        page={page}
+        pageCount={launchData?.totalPages || 1}
+        onPageChange={handlePageChange}
       />
     </Box>
   );
