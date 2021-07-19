@@ -25,9 +25,10 @@ export default function Table<T extends Record<string, any>>(
       emptyMessage?: string;
       error?: unknown;
       resetErrorHandler?: () => void;
-      page: number;
-      pageCount: number;
-      onPageChange: (page: number) => void;
+      page?: number;
+      pageCount?: number;
+      onPageChange?: (page: number) => void;
+      onRowClick?: (row: T) => void;
     }
   >
 ): React.ReactElement {
@@ -41,6 +42,7 @@ export default function Table<T extends Record<string, any>>(
     page: initialPage,
     pageCount: controlledPageCount,
     onPageChange,
+    onRowClick,
   } = props;
 
   if (error && !resetErrorHandler) {
@@ -75,7 +77,7 @@ export default function Table<T extends Record<string, any>>(
   );
 
   React.useEffect(() => {
-    onPageChange(pageIndex);
+    onPageChange?.(pageIndex);
   }, [pageIndex, onPageChange]);
 
   const status = React.useMemo(() => {
@@ -123,7 +125,13 @@ export default function Table<T extends Record<string, any>>(
                 {page.map((row, i) => {
                   prepareRow(row);
                   return (
-                    <Tr {...row.getRowProps()}>
+                    <Tr
+                      {...row.getRowProps({
+                        onClick: onRowClick
+                          ? () => onRowClick(row.original)
+                          : undefined,
+                      } as any)}
+                    >
                       {row.cells.map((cell) => {
                         return (
                           <Td
@@ -133,6 +141,7 @@ export default function Table<T extends Record<string, any>>(
                             border="none"
                             py={5}
                             color={"nitroGray.800"}
+                            cursor="pointer"
                             {...cell.getCellProps()}
                           >
                             {cell.render("Cell")}
