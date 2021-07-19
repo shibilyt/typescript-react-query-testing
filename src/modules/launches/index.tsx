@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import { Badge, Box } from "@chakra-ui/react";
 import { CellProps, Column } from "react-table";
 import format from "date-fns/format";
@@ -7,6 +7,8 @@ import format from "date-fns/format";
 import Table from "modules/common/components/table";
 import Select from "modules/common/components/select";
 import DateFilter from "./components/dateFilter";
+import LaunchDetail from "./components/launchDetail";
+
 import { Filter as FilterIcon } from "assets/Filter";
 import { useGetLaunches } from "./queries";
 import { getFormatString, getStatusOfLaunch } from "./utils";
@@ -78,7 +80,7 @@ const columns: Column<SpaceXApiResponse>[] = [
           py={1}
           borderRadius="2xl"
           textTransform="capitalize"
-          fontWeight="medium"
+          fontWeight="600"
         >
           {status}
         </Badge>
@@ -100,6 +102,7 @@ const filterOptions = [
 
 export default function Launches() {
   const history = useHistory();
+  const { search } = useLocation();
   const { id } = useParams<{ id: string }>();
 
   const queryParams: any = useQueryParams();
@@ -140,6 +143,12 @@ export default function Launches() {
     initialDateFilterRange
   );
 
+  const [page, setPage] = React.useState(0);
+
+  const handlePageChange = React.useCallback((page: number) => {
+    setPage(page + 1);
+  }, []);
+
   React.useEffect(() => {
     let query = `?statusFilter=${statusFilter}`;
     if (Object.values(dateFilterStatuses).includes(dateFilterRange)) {
@@ -153,18 +162,14 @@ export default function Launches() {
         query +
         `${!!endDate ? `&endDate=${format(endDate, "d MMM yyyy")}` : ""}`;
     }
+    query = query + `&page=${page}`;
 
     history.push(query);
-  }, [statusFilter, history, dateFilterRange, dateFilter]);
-
-  const [page, setPage] = React.useState(0);
-
-  const handlePageChange = React.useCallback((page: number) => {
-    setPage(page + 1);
-  }, []);
+  }, [statusFilter, history, dateFilterRange, dateFilter, page]);
 
   const {
     data: launchData,
+    isSuccess,
     isLoading,
     error,
     refetch,
@@ -188,38 +193,90 @@ export default function Launches() {
     [launchData]
   );
 
+  const dataLookupTable = React.useRef<Record<
+    string,
+    SpaceXApiResponse
+  > | null>();
+
+  React.useEffect(() => {
+    if (launchData?.docs && launchData.docs.length > 0) {
+      const lookupTable: Record<string, SpaceXApiResponse> = {};
+      launchData.docs.forEach((launch) => {
+        lookupTable[launch.id] = launch;
+      });
+      dataLookupTable.current = lookupTable;
+    }
+  }, [launchData]);
+
+  const handleRowClick = ({ id }: SpaceXApiResponse) => {
+    history.push(`/launches/${id}${search}`);
+  };
+
+  const handleDetailModalClose = () => {
+    history.push(`/launches${search}`);
+  };
+
+  const lookupTable = React.useMemo(
+    () =>
+      launchData
+        ? launchData?.docs.reduce<Record<string, SpaceXApiResponse>>(
+            (lookup, launch) => {
+              return {
+                ...lookup,
+                [launch.id]: launch,
+              };
+            },
+            {}
+          )
+        : {},
+    [launchData]
+  );
+
   return (
-    <Box my={12}>
-      <Box mb={12} display="flex" justifyContent="space-between">
-        <DateFilter
-          dateFilter={dateFilter}
-          setDateFilter={setDateFilter}
-          filterRange={dateFilterRange}
-          setFilterRange={setDateFilterRange}
-        />
-        <Select
-          options={filterOptions}
-          name="filter-select"
-          label="filter"
-          value={statusFilter}
-          onChange={(option) => {
-            setStatusFilter(option.value);
-          }}
-          startIcon={<FilterIcon />}
+    <>
+      <Box my={12}>
+        <Box mb={12} display="flex" justifyContent="space-between">
+          <DateFilter
+            dateFilter={dateFilter}
+            setDateFilter={setDateFilter}
+            filterRange={dateFilterRange}
+            setFilterRange={setDateFilterRange}
+          />
+          <Select
+            options={filterOptions}
+            name="filter-select"
+            label="filter"
+            value={statusFilter}
+            onChange={(option) => {
+              setStatusFilter(option.value);
+            }}
+            startIcon={<FilterIcon />}
+          />
+        </Box>
+        <Table<SpaceXApiResponse>
+          name="launches-table"
+          columns={columns}
+          data={data}
+          emptyMessage={"No results found for the specified filter"}
+          isLoading={isLoading}
+          error={error}
+          resetErrorHandler={refetch}
+          page={page}
+          pageCount={launchData?.totalPages || 1}
+          onPageChange={handlePageChange}
+          onRowClick={handleRowClick}
         />
       </Box>
-      <Table<SpaceXApiResponse>
-        name="launches-table"
-        columns={columns}
-        data={data}
-        emptyMessage={"No results found for the specified filter"}
-        isLoading={isLoading}
-        error={error}
-        resetErrorHandler={refetch}
-        page={page}
-        pageCount={launchData?.totalPages || 1}
-        onPageChange={handlePageChange}
-      />
-    </Box>
+      {isSuccess &&
+      launchData?.docs &&
+      launchData.docs.length > 0 &&
+      lookupTable[id] ? (
+        <LaunchDetail
+          data={lookupTable[id]}
+          isOpen={!!id}
+          handleClose={handleDetailModalClose}
+        />
+      ) : null}
+    </>
   );
 }

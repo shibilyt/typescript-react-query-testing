@@ -4,11 +4,15 @@ export const mockData: SpaceXApiResponse[] = [
   {
     rocket: {
       name: "Falcon 9",
+      type: "",
+      company: "",
+      country: "",
     },
     success: null,
     payloads: [
       {
         orbit: "SSO",
+        type: "",
       },
     ],
     launchpad: {
@@ -24,11 +28,15 @@ export const mockData: SpaceXApiResponse[] = [
   {
     rocket: {
       name: "Falcon Heavy",
+      company: "",
+      country: "",
+      type: "",
     },
     success: null,
     payloads: [
       {
         orbit: "GTO",
+        type: "",
       },
     ],
     launchpad: {
@@ -43,9 +51,12 @@ export const mockData: SpaceXApiResponse[] = [
   {
     rocket: {
       name: "Falcon 9",
+      company: "",
+      country: "",
+      type: "",
     },
     success: null,
-    payloads: [{ orbit: "GTO" }],
+    payloads: [{ orbit: "GTO", type: "" }],
     launchpad: {
       name: "CCSFS SLC 40",
     },
@@ -58,9 +69,12 @@ export const mockData: SpaceXApiResponse[] = [
   {
     rocket: {
       name: "Falcon 9",
+      company: "",
+      country: "",
+      type: "",
     },
     success: null,
-    payloads: [{ orbit: "TLI" }],
+    payloads: [{ orbit: "TLI", type: "" }],
     launchpad: {
       name: "VAFB SLC 4E",
     },
@@ -73,11 +87,15 @@ export const mockData: SpaceXApiResponse[] = [
   {
     rocket: {
       name: "Falcon 9",
+      company: "",
+      country: "",
+      type: "",
     },
     success: null,
     payloads: [
       {
         orbit: "ISS",
+        type: "",
       },
     ],
     launchpad: {
@@ -92,11 +110,15 @@ export const mockData: SpaceXApiResponse[] = [
   {
     rocket: {
       name: "Falcon 9",
+      company: "",
+      country: "",
+      type: "",
     },
     success: null,
     payloads: [
       {
         orbit: "ISS",
+        type: "",
       },
     ],
     launchpad: {
@@ -111,11 +133,15 @@ export const mockData: SpaceXApiResponse[] = [
   {
     rocket: {
       name: "Falcon 9",
+      company: "",
+      country: "",
+      type: "",
     },
     success: null,
     payloads: [
       {
         orbit: "SSO",
+        type: "",
       },
     ],
     launchpad: {
@@ -130,11 +156,15 @@ export const mockData: SpaceXApiResponse[] = [
   {
     rocket: {
       name: "Falcon 9",
+      company: "",
+      country: "",
+      type: "",
     },
     success: null,
     payloads: [
       {
         orbit: "SSO",
+        type: "",
       },
     ],
     launchpad: {
@@ -149,11 +179,15 @@ export const mockData: SpaceXApiResponse[] = [
   {
     rocket: {
       name: "Falcon 9",
+      company: "",
+      country: "",
+      type: "",
     },
     success: null,
     payloads: [
       {
         orbit: "LEO",
+        type: "",
       },
     ],
     launchpad: {
@@ -168,11 +202,15 @@ export const mockData: SpaceXApiResponse[] = [
   {
     rocket: {
       name: "Falcon 9",
+      company: "",
+      country: "",
+      type: "",
     },
     success: true,
     payloads: [
       {
         orbit: "MEO",
+        type: "",
       },
     ],
     launchpad: {
@@ -187,11 +225,15 @@ export const mockData: SpaceXApiResponse[] = [
   {
     rocket: {
       name: "Falcon 9",
+      company: "",
+      country: "",
+      type: "",
     },
     success: true,
     payloads: [
       {
         orbit: "VLEO",
+        type: "",
       },
     ],
     launchpad: {
@@ -206,11 +248,15 @@ export const mockData: SpaceXApiResponse[] = [
   {
     rocket: {
       name: "Falcon 9",
+      company: "",
+      country: "",
+      type: "",
     },
     success: true,
     payloads: [
       {
         orbit: "SSO",
+        type: "",
       },
     ],
     launchpad: {
@@ -225,11 +271,15 @@ export const mockData: SpaceXApiResponse[] = [
   {
     rocket: {
       name: "Falcon 9",
+      company: "",
+      country: "",
+      type: "",
     },
     success: true,
     payloads: [
       {
         orbit: "ISS",
+        type: "",
       },
     ],
     launchpad: {

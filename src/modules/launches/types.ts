@@ -42,10 +42,24 @@ export type SpaceXApiResponse = {
   id: string;
   flight_number: Number;
   name: string;
+  details?: string;
   date_utc: string;
-  rocket?: { name: string } | null;
+  rocket?: {
+    name: string;
+    type: string;
+    company: string;
+    country: string;
+  } | null;
   success?: Boolean | null;
   upcoming: Boolean;
-  payloads?: { orbit: string | null }[];
+  payloads?: { orbit: string | null; type: string }[];
   launchpad?: { name: string } | null;
+  links?: {
+    patch?: {
+      small?: string | null;
+    };
+    youtube_id?: string | null;
+    wikipedia?: string | null;
+    article?: string | null;
+  } | null;
 };

@@ -5,7 +5,6 @@ import { getQueryFromFilter } from "../utils";
 
 export const launchesEndPoints = {
   getLaunches: "launches/query" as const,
-  getLaunchDetail: (id: string) => `launches/${id}`,
 };
 
 export function useGetLaunches(
@@ -20,8 +19,11 @@ export function useGetLaunches(
         options: {
           populate: [
             { path: "launchpad", select: "name" },
-            { path: "rocket", select: "name" },
-            { path: "payloads", select: "orbit" },
+            {
+              path: "rocket",
+              select: ["name", "type", "company", "country"],
+            },
+            { path: "payloads", select: ["orbit", "type"] },
           ],
           select: [
             "id",
@@ -33,18 +35,19 @@ export function useGetLaunches(
             "success",
             "upcoming",
             "rocket",
+            "links.patch.small",
+            "links.wikipedia",
+            "links.youtube_id",
+            "links.article",
+            "details",
           ],
           sort: {
             flight_number: "asc",
           },
           page,
+          limit: 12,
         },
       })
       .then((response) => response.data)
   );
-}
-
-export function useGetLaunchDetail(id: string) {
-  const key = launchesEndPoints.getLaunchDetail(id);
-  return useQuery(key, () => axios.get(key));
 }
