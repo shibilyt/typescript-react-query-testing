@@ -41,7 +41,7 @@ export default function Pagination({
         borderTopLeftRadius={8}
         borderBottomLeftRadius={8}
       >
-        <ChevronLeftIcon h="18px" w="18px" color="nitroGray.600" />
+        <ChevronLeftIcon h="16px" w="16px" color="nitroGray.600" />
       </chakra.button>
       {pages.map((pageNumber, index) => (
         <chakra.button
@@ -73,7 +73,7 @@ export default function Pagination({
         borderTopRightRadius={8}
         borderBottomRightRadius={8}
       >
-        <ChevronRightIcon h="18px" w="18px" color="nitroGray.600" />
+        <ChevronRightIcon h="16px" w="16px" color="nitroGray.600" />
       </chakra.button>
     </Box>
   );
