@@ -20,6 +20,7 @@ const columns = [
     accessor: "name",
   },
 ];
+
 const data = [
   {
     success: false,
@@ -44,7 +45,8 @@ const data = [
   },
 ];
 
-test("table renders with proper headers and data", () => {
+describe ('table, () => {
+test("renders with proper headers and data", () => {
   render(<Table data={data} columns={columns} name="table" />);
 
   expect(screen.getByRole("table")).toBeInTheDocument();
@@ -66,7 +68,7 @@ test("table renders with proper headers and data", () => {
   });
 });
 
-test("table loading is rendered when loading", () => {
+test("loading is rendered when loading", () => {
   const data = [
     {
       name: "FalconSat",
@@ -86,7 +88,7 @@ test("table loading is rendered when loading", () => {
   expect(screen.queryByTestId("loading")).toBeInTheDocument();
 });
 
-test("table error is captured by ErrorBoudary", () => {
+test("error is captured by ErrorBoudary", () => {
   const data = [
     {
       name: "FalconSat",
@@ -114,7 +116,7 @@ test("throws error if controlled error is passed without reset handler", () => {
   expect(() => render(<Table error={error} name="table" />)).toThrow();
 });
 
-test("controlled error is handled by Table", () => {
+test("controlled error is handled", () => {
   const error = new Error("this is an error from API?");
   const resetError = () => {};
   render(
@@ -131,4 +133,4 @@ test("controlled error is handled by Table", () => {
     expect(screen.queryByTestId("table-error")).toBeInTheDocument();
   });
   expect(screen.getByText(error.message)).toBeInTheDocument();
-});
+});})
