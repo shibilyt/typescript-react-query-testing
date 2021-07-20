@@ -42,7 +42,7 @@ export default function LaunchDetail({
       scrollBehavior="outside"
     >
       <ModalOverlay />
-      <ModalContent maxW={'34em'}>
+      <ModalContent maxW={"34em"}>
         <ModalBody p={8} position="relative">
           <chakra.button
             aria-label="close launch detail"
@@ -74,7 +74,7 @@ function LaunchContent({ data }: { data: SpaceXApiResponse }) {
         <Image
           boxSize="80px"
           objectFit="cover"
-          src={data.links?.patch?.small || undefined}
+          src={data.links?.patch?.small as string}
           alt="launch mission patch"
         />
 
