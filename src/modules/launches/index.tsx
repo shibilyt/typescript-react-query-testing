@@ -129,6 +129,11 @@ export default function Launches() {
   const [dateFilter, setDateFilter] =
     React.useState<DateFilterType>(initialDateFilter);
 
+  const handleDateFilterChange = (date: DateFilterType) => {
+    setPage(0);
+    setDateFilter(date);
+  };
+
   const initialDateFilterRange = () => {
     if (queryParams.get("dateFilterStatus"))
       return queryParams.get("dateFilterStatus");
@@ -143,10 +148,12 @@ export default function Launches() {
     initialDateFilterRange
   );
 
-  const [page, setPage] = React.useState(0);
+  const [page, setPage] = React.useState(() => {
+    return +queryParams.get("page") - 1 ?? 0;
+  });
 
   const handlePageChange = React.useCallback((page: number) => {
-    setPage(page + 1);
+    setPage(page);
   }, []);
 
   React.useEffect(() => {
@@ -162,7 +169,7 @@ export default function Launches() {
         query +
         `${!!endDate ? `&endDate=${format(endDate, "d MMM yyyy")}` : ""}`;
     }
-    query = query + `&page=${page}`;
+    query = query + `&page=${page + 1}`;
 
     history.push(query);
   }, [statusFilter, history, dateFilterRange, dateFilter, page]);
@@ -185,7 +192,7 @@ export default function Launches() {
           }
         : {}),
     },
-    page
+    page + 1
   );
 
   const data = React.useMemo(
@@ -238,7 +245,7 @@ export default function Launches() {
         <Box mb={12} display="flex" justifyContent="space-between">
           <DateFilter
             dateFilter={dateFilter}
-            setDateFilter={setDateFilter}
+            setDateFilter={handleDateFilterChange}
             filterRange={dateFilterRange}
             setFilterRange={setDateFilterRange}
           />
@@ -249,6 +256,7 @@ export default function Launches() {
             value={statusFilter}
             onChange={(option) => {
               setStatusFilter(option.value);
+              setPage(0);
             }}
             startIcon={<FilterIcon />}
           />
