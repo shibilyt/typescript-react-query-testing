@@ -33,7 +33,6 @@ export default function LaunchDetail({
   isOpen,
   handleClose,
 }: LaunchDetailProps) {
-  console.log("data  ", data);
   return (
     <Modal
       isOpen={isOpen}
