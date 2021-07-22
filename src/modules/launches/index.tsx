@@ -10,15 +10,16 @@ import DateFilter from "./components/dateFilter";
 import LaunchDetail from "./components/launchDetail";
 
 import { Filter as FilterIcon } from "assets/Filter";
-import { useGetLaunches } from "./queries";
-import { getFormatString, getStatusOfLaunch } from "./utils";
-import useQueryParams from "modules/common/hooks/useQueryParams";
 
-import { filterStates, SpaceXApiResponse } from "./types";
+import useQueryParams from "modules/common/hooks/useQueryParams";
+import { useGetLaunches } from "./queries";
+import { getFormatString, getStatusOfLaunch, getDates } from "./utils";
+
 import {
   DateFilterType,
-  filterStatuses as dateFilterStatuses,
+  filterRanges as dateFilterRanges,
 } from "modules/launches/components/dateFilter/types";
+import { filterStates, SpaceXApiResponse } from "./types";
 
 const columns: Column<SpaceXApiResponse>[] = [
   {
@@ -104,68 +105,92 @@ export default function Launches() {
   const history = useHistory();
   const { search } = useLocation();
   const { id } = useParams<{ id: string }>();
+  const queryParams = useQueryParams();
 
-  const queryParams: any = useQueryParams();
+  // first launch
+  // no params set to url
+  React.useEffect(() => {
+    if (!queryParams.has("page")) {
+      queryParams.set("page", "1");
+      history.replace(`launches?${queryParams.toString()}`);
+    }
+    if (!queryParams.has("statusFilter")) {
+      queryParams.set("statusFilter", filterStates.all);
+      history.replace(`launches?${queryParams.toString()}`);
+    }
+    if (!queryParams.has("dateFilter") && !queryParams.has("startDate")) {
+      queryParams.set("dateFilter", dateFilterRanges.pastSixMonths);
+      history.replace(`launches?${queryParams.toString()}`);
+    }
+  }, [history, queryParams]);
 
   const [statusFilter, setStatusFilter] = React.useState(
     () => queryParams.get("statusFilter") || filterStates.all
   );
 
-  const initialDateFilter = () => {
-    if (queryParams.get("dateFilterStatus") == null) {
-      return {
-        startDate: new Date(queryParams.get("startDate")),
-        endDate: queryParams.get("endDate")
-          ? new Date(queryParams.get("endDate"))
-          : null,
-      };
-    }
-    return {
-      startDate: null,
-      endDate: null,
-    };
-  };
+  const [dateFilter, setDateFilter] = React.useState<DateFilterType>({
+    startDate: null,
+    endDate: null,
+  });
 
-  const [dateFilter, setDateFilter] =
-    React.useState<DateFilterType>(initialDateFilter);
+  const [dateFilterRange, setDateFilterRange] = React.useState(() => {
+    if (queryParams.get("dateFilter")) return queryParams.get("dateFilter");
+    return dateFilterRanges.pastSixMonths;
+  });
 
-  const initialDateFilterRange = () => {
-    if (queryParams.get("dateFilterStatus"))
-      return queryParams.get("dateFilterStatus");
-    if (queryParams.get("startDate"))
-      return `${queryParams.get("startDate")} - ${
-        queryParams.get("endDate") || "Upcoming"
-      }`;
-    return dateFilterStatuses.pastSixMonths;
-  };
+  const [page, setPage] = React.useState(() => {
+    if (queryParams.get("page"))
+      return +(queryParams.get("page") as string | number) - 1;
+    return 0;
+  });
 
-  const [dateFilterRange, setDateFilterRange] = React.useState(
-    initialDateFilterRange
-  );
-
-  const [page, setPage] = React.useState(0);
-
-  const handlePageChange = React.useCallback((page: number) => {
-    setPage(page + 1);
-  }, []);
+  // to check if dateRange is changed between renders
+  const prevDateRange = React.useRef<string | null>(null);
 
   React.useEffect(() => {
-    let query = `?statusFilter=${statusFilter}`;
-    if (Object.values(dateFilterStatuses).includes(dateFilterRange)) {
-      query = query + `&dateFilterStatus=${dateFilterRange}`;
-    } else {
-      const { startDate, endDate } = dateFilter;
-      query =
-        query +
-        `${!!startDate ? `&startDate=${format(startDate, "d MMM yyyy")}` : ""}`;
-      query =
-        query +
-        `${!!endDate ? `&endDate=${format(endDate, "d MMM yyyy")}` : ""}`;
+    if (
+      queryParams.has("dateFilter") &&
+      queryParams.get("dateFilter") !== prevDateRange.current
+    ) {
+      prevDateRange.current = queryParams.get("dateFilter");
+      const dateState = getDates(queryParams.get("dateFilter") as string);
+      setDateFilter(dateState);
+      setDateFilterRange(() => {
+        return queryParams.get("dateFilter");
+      });
     }
-    query = query + `&page=${page}`;
+    const queryPage = queryParams.get("page");
+    if (queryPage != null && +queryPage >= 1) {
+      setPage(+(queryParams.get("page") as string) - 1);
+    }
+    const queryFilterStatus = queryParams.get("statusFilter");
+    if (queryFilterStatus != null) {
+      setStatusFilter(queryFilterStatus);
+    }
+  }, [queryParams]);
 
-    history.push(query);
-  }, [statusFilter, history, dateFilterRange, dateFilter, page]);
+  // to check if the page changing is different
+  const prevPage = React.useRef(page);
+  const prevQueryParam = React.useRef(queryParams.toString());
+
+  const setQueryToUrl = React.useCallback(() => {
+    if (prevQueryParam.current !== queryParams.toString()) {
+      prevQueryParam.current = queryParams.toString();
+      history.push(`launches?${queryParams.toString()}`);
+    }
+  }, [history, queryParams]);
+
+  const handlePageChange = React.useCallback(
+    (changedPage: number) => {
+      if (changedPage !== prevPage.current) {
+        prevPage.current = changedPage;
+        queryParams.set("page", `${changedPage + 1}`);
+
+        setQueryToUrl();
+      }
+    },
+    [queryParams, setQueryToUrl]
+  );
 
   const {
     data: launchData,
@@ -175,17 +200,17 @@ export default function Launches() {
     refetch,
   } = useGetLaunches(
     {
-      filter: statusFilter,
+      filter: statusFilter ? statusFilter : filterStates.all,
       ...(dateFilter.startDate
         ? {
             date: {
               start: dateFilter.startDate.toISOString(),
-              end: dateFilter.endDate?.toISOString(),
+              end: dateFilter.endDate ? dateFilter.endDate.toISOString() : null,
             },
           }
         : {}),
     },
-    page
+    page ? page + 1 : 1
   );
 
   const data = React.useMemo(
@@ -208,9 +233,12 @@ export default function Launches() {
     }
   }, [launchData]);
 
-  const handleRowClick = ({ id }: SpaceXApiResponse) => {
-    history.push(`/launches/${id}${search}`);
-  };
+  const handleRowClick = React.useCallback(
+    ({ id }: SpaceXApiResponse) => {
+      history.push(`/launches/${id}${search}`);
+    },
+    [history, search]
+  );
 
   const handleDetailModalClose = () => {
     history.push(`/launches${search}`);
@@ -238,9 +266,12 @@ export default function Launches() {
         <Box mb={12} display="flex" justifyContent="space-between">
           <DateFilter
             dateFilter={dateFilter}
-            setDateFilter={setDateFilter}
             filterRange={dateFilterRange}
-            setFilterRange={setDateFilterRange}
+            setFilterRange={(range: string) => {
+              queryParams.set("dateFilter", range);
+              queryParams.set("page", "1");
+              setQueryToUrl();
+            }}
           />
           <Select
             options={filterOptions}
@@ -248,7 +279,9 @@ export default function Launches() {
             label="filter"
             value={statusFilter}
             onChange={(option) => {
-              setStatusFilter(option.value);
+              queryParams.set("statusFilter", option.value);
+              queryParams.set("page", "1");
+              setQueryToUrl();
             }}
             startIcon={<FilterIcon />}
           />

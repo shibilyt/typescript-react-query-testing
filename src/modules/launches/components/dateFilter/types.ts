@@ -3,7 +3,7 @@ export type DateFilterType = {
   endDate: Date | null;
 };
 
-export enum filterStatuses {
+export enum filterRanges {
   pastWeek = "Last Week",
   pastMonth = "Last Month",
   pastThreeMonths = "Last 3 Months",
