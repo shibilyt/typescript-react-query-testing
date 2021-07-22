@@ -79,7 +79,7 @@ function LaunchContent({ data }: { data: SpaceXApiResponse }) {
         />
 
         <VStack alignItems="flex-start" spacing={2}>
-          <HStack>
+          <HStack maxW="340px">
             <Heading as="h1" fontSize="18px" fontWeight="500" lineHeight={1}>
               {data.name}
             </Heading>
