@@ -25,7 +25,7 @@ export default function Table<T extends Record<string, any>>(
       emptyMessage?: string;
       error?: unknown;
       resetErrorHandler?: () => void;
-      page?: number;
+      page?: number | null;
       pageCount?: number;
       onPageChange?: (page: number) => void;
       onRowClick?: (row: T) => void;
@@ -69,12 +69,20 @@ export default function Table<T extends Record<string, any>>(
     {
       columns,
       data,
-      initialState: { pageIndex: initialPage },
+      initialState: { pageIndex: initialPage || 0 },
       manualPagination: true,
       pageCount: controlledPageCount,
     },
     usePagination
   );
+
+  const prevInitialPage = React.useRef(initialPage);
+  React.useEffect(() => {
+    if (initialPage !== prevInitialPage.current && initialPage != null) {
+      prevInitialPage.current = initialPage;
+      gotoPage(initialPage);
+    }
+  }, [initialPage, gotoPage]);
 
   React.useEffect(() => {
     onPageChange?.(pageIndex);
